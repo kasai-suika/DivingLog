@@ -13,7 +13,7 @@ import com.ojtapp.divinglog.util.ConversionUtil;
 import java.io.IOException;
 
 public class ImageViewBindingAdapter extends BaseObservable {
-    public static Uri uri;
+    public static Uri uri;  // TODO 違和感　こっからとってきてはいけなさそうな～気がする～
 
     @BindingAdapter(value = {"app:imageUri", "app:imageContext"})
     public static void setImageView(ImageView imageView, Uri uri, Context context) {

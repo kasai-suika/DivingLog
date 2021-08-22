@@ -57,6 +57,7 @@ public class LogAddFragment extends Fragment {
         android.util.Log.d(TAG, "onCreateView");
         MainViewModel viewModel = new MainViewModel(requireContext(), null);
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_log, container, false);
+        binding.setLifecycleOwner(this);
         binding.setMain(viewModel);
 
         return binding.getRoot();

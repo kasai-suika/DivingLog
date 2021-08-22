@@ -44,4 +44,6 @@
     <string name="dialog_delete_progress_text">削除中です</string>
     <string name="text_progress">実行中です…</string>
     <string name="diveNumber">本目</string>
+    <string name="weather_place_izu">伊豆</string>
+    <string name="weather_place_okinawa">沖縄</string>
 </resources>

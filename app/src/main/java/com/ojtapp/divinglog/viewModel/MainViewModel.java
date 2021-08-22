@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.ojtapp.divinglog.BindingAdapter.ImageViewBindingAdapter;
@@ -18,6 +19,7 @@ import com.ojtapp.divinglog.appif.DivingLog;
 import com.ojtapp.divinglog.controller.DeleteAsyncTask;
 import com.ojtapp.divinglog.controller.RegisterAsyncTask;
 import com.ojtapp.divinglog.controller.UpdateAsyncTask;
+import com.ojtapp.divinglog.controller.WeatherInfoReceiver;
 import com.ojtapp.divinglog.util.ConversionUtil;
 import com.ojtapp.divinglog.view.dialog.DialogFragment;
 import com.ojtapp.divinglog.view.main.MainActivity;
@@ -39,8 +41,8 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
     public String depthAve;
     public String airStart;
     public String airEnd;
-    public String weather;
-    public String temp;
+    public MutableLiveData<String> weather = new MutableLiveData<>();
+    public MutableLiveData<String> temp = new MutableLiveData<>();
     public String tempWater;
     public String visibility;
     public String memberNavigate;
@@ -179,6 +181,43 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         updateAsyncTask.execute(divingLog);
     }
 
+    public void onIzuWeatherClick(View view) {
+        WeatherInfoReceiver weatherInfoReceiver = new WeatherInfoReceiver();
+        weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiver.WeatherInfoCallback() {
+            @Override
+            public void onSuccess(String weather, String temp) {
+                Log.d(TAG, "we = " + weather + ", tem = " + temp);
+                MainViewModel.this.weather.setValue(weather);
+                MainViewModel.this.temp.setValue(temp);
+
+            }
+
+            @Override
+            public void onFailure() {
+                Log.e(TAG, "天気が正常に取得されませんでした。");
+            }
+        });
+        weatherInfoReceiver.execute("Izu");
+    }
+
+    public void onOkinawaWeatherClick(View view) {
+        WeatherInfoReceiver weatherInfoReceiver = new WeatherInfoReceiver();
+        weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiver.WeatherInfoCallback() {
+            @Override
+            public void onSuccess(String weather, String temp) {
+                Log.d(TAG, "we = " + weather + ", tem = " + temp);
+                MainViewModel.this.weather.setValue(weather);
+                MainViewModel.this.temp.setValue(temp);
+            }
+
+            @Override
+            public void onFailure() {
+                Log.e(TAG, "天気が正常に取得されませんでした。");
+            }
+        });
+        weatherInfoReceiver.execute("Okinawa");
+    }
+
     /**
      * DivingLogクラスにあるデータをレイアウトに格納する
      *
@@ -192,8 +231,8 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         depthAve = ConversionUtil.getStrFromInt(divingLog.getDepthAve());
         airStart = ConversionUtil.getStrFromInt(divingLog.getAirStart());
         airEnd = ConversionUtil.getStrFromInt(divingLog.getAirEnd());
-        weather = divingLog.getWeather();
-        temp = ConversionUtil.getStrFromInt(divingLog.getTemp());
+        weather.setValue(divingLog.getWeather());
+        temp.setValue(ConversionUtil.getStrFromInt(divingLog.getTemp()));
         tempWater = ConversionUtil.getStrFromInt(divingLog.getTempWater());
         visibility = ConversionUtil.getStrFromInt(divingLog.getVisibility());
         member = divingLog.getMember();
@@ -249,6 +288,8 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      * @param divingLog 　格納先のDivingLogクラス
      */
     private void setDateToDivingLog(DivingLog divingLog) {
+        Log.d("setDateToDivingLo", "weather=" + weather);
+        Log.d("setDateToDivingLo", "temp=" + temp);
         divingLog.setDiveNumber(Integer.parseInt(diveNumber));
         divingLog.setPlace(place);
         divingLog.setPoint(point);
@@ -257,8 +298,8 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         divingLog.setAirStart(ConversionUtil.getIntFromStr(airStart));
         divingLog.setAirEnd(ConversionUtil.getIntFromStr(airEnd));
         divingLog.setAirDive(getDiveAir());
-        divingLog.setWeather(weather);
-        divingLog.setTemp(ConversionUtil.getIntFromStr(temp));
+        divingLog.setWeather((String) weather.getValue());
+        divingLog.setTemp(ConversionUtil.getIntFromStr((String) temp.getValue()));
         divingLog.setTempWater(ConversionUtil.getIntFromStr(tempWater));
         divingLog.setVisibility(ConversionUtil.getIntFromStr(visibility));
         divingLog.setMember(member);
