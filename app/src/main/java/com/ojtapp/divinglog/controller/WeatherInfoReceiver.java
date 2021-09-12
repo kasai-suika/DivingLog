@@ -5,6 +5,8 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.ojtapp.divinglog.BuildConfig;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +23,7 @@ import java.util.Map;
 
 public class WeatherInfoReceiver extends AsyncTask<String, String, String> {
     private static final String TAG = WeatherInfoReceiver.class.getSimpleName();
-    private static final String APIKEY = "2d40ab23ed641ab19053f5cdeaa4f2c4";
+
     /**
      * コールバック設定用
      */
@@ -31,7 +33,7 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... params) {
         String cityName = params[0];
-        String urlStr = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + APIKEY;
+        String urlStr = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + BuildConfig.API_KEY;
         String result = " ";
 
         HttpURLConnection con = null;
