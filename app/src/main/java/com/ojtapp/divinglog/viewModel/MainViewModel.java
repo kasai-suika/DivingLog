@@ -182,30 +182,18 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
     }
 
     public void onIzuWeatherClick(View view) {
-        WeatherInfoReceiver weatherInfoReceiver = new WeatherInfoReceiver();
-        weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiver.WeatherInfoCallback() {
-            @Override
-            public void onSuccess(String weather, String temp) {
-                Log.d(TAG, "we = " + weather + ", tem = " + temp);
-                MainViewModel.this.weather.setValue(weather);
-                MainViewModel.this.temp.setValue(temp);
-
-            }
-
-            @Override
-            public void onFailure() {
-                Log.e(TAG, "天気が正常に取得されませんでした。");
-            }
-        });
-        weatherInfoReceiver.execute("Izu");
+        getWeather("Izu");
     }
 
     public void onOkinawaWeatherClick(View view) {
+        getWeather("Okinawa");
+    }
+
+    private void getWeather(@NonNull String place) {
         WeatherInfoReceiver weatherInfoReceiver = new WeatherInfoReceiver();
         weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiver.WeatherInfoCallback() {
             @Override
             public void onSuccess(String weather, String temp) {
-                Log.d(TAG, "we = " + weather + ", tem = " + temp);
                 MainViewModel.this.weather.setValue(weather);
                 MainViewModel.this.temp.setValue(temp);
             }
@@ -215,7 +203,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
                 Log.e(TAG, "天気が正常に取得されませんでした。");
             }
         });
-        weatherInfoReceiver.execute("Okinawa");
+        weatherInfoReceiver.execute(place);
     }
 
     /**
