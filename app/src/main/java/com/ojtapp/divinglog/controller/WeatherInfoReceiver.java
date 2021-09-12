@@ -5,7 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.ojtapp.divinglog.BuildConfig;
+import com.ojtapp.divinglog.util.ConversionUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +33,7 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... params) {
         String cityName = params[0];
-        String urlStr = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + BuildConfig.API_KEY;
+        String urlStr = ConversionUtil.getWeatherSiteURL(cityName);
         String result = " ";
 
         HttpURLConnection con = null;

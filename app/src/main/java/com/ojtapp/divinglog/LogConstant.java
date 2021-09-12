@@ -39,4 +39,8 @@ public class LogConstant {
      * 削除確認ダイアログのメッセージ
      */
     public static final String MESSAGE_DELETE_DIALOG = "削除してもよろしいですか？";
+    /**
+     * 天気取得サイトのURL
+     */
+    public static final String[] WEATHER_SITE_URL = {"https://api.openweathermap.org/data/2.5/weather?q=", "", "&appid=", BuildConfig.API_KEY};
 }

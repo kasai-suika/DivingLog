@@ -9,6 +9,8 @@ import android.os.ParcelFileDescriptor;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.ojtapp.divinglog.LogConstant;
+
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -71,10 +73,11 @@ public class ConversionUtil {
     }
 
     /**
-     * 時間をString型のフォーマットに変換して返
+     * String型の時間を返す。
+     *
      * @param timeFormat 時間のフォーマット
-     * @param hour　時間
-     * @param minute　分
+     * @param hour       　時間
+     * @param minute     　分
      * @return Stringに変換後の時間
      */
     public static String getStrTime(@NonNull SimpleDateFormat timeFormat, int hour, int minute) {
@@ -85,11 +88,12 @@ public class ConversionUtil {
     }
 
     /**
-     * 日付をString型のフォーマットに変換して返す
+     * String型の日付を返す。
+     *
      * @param dateFormat 日付のフォーマット
-     * @param year 年
-     * @param month 月
-     * @param day 日
+     * @param year       年
+     * @param month      月
+     * @param day        日
      * @return Stringに変換後の日付
      */
     public static String getStrDate(@NonNull SimpleDateFormat dateFormat, int year, int month, int day) {
@@ -98,4 +102,15 @@ public class ConversionUtil {
         return dateFormat.format(calendar.getTime());   // フォーマットを指定してDivingLogクラスにセット
     }
 
+    /**
+     * 天気取得サイトのURLを返す。
+     *
+     * @param cityName 天気を取得する場所
+     * @return 天気取得サイトのURL
+     */
+    public static String getWeatherSiteURL(String cityName) {
+        String[] weatherSiteURL = LogConstant.WEATHER_SITE_URL;
+        weatherSiteURL[2] = cityName;
+        return String.join("", weatherSiteURL);
+    }
 }
