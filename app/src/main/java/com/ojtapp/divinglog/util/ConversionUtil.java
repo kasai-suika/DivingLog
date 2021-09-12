@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class ConversionUtil {
     /**
@@ -67,4 +69,33 @@ public class ConversionUtil {
             return String.valueOf(intData);
         }
     }
+
+    /**
+     * 時間をString型のフォーマットに変換して返
+     * @param timeFormat 時間のフォーマット
+     * @param hour　時間
+     * @param minute　分
+     * @return Stringに変換後の時間
+     */
+    public static String getStrTime(@NonNull SimpleDateFormat timeFormat, int hour, int minute) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        return timeFormat.format(calendar.getTime());
+    }
+
+    /**
+     * 日付をString型のフォーマットに変換して返す
+     * @param dateFormat 日付のフォーマット
+     * @param year 年
+     * @param month 月
+     * @param day 日
+     * @return Stringに変換後の日付
+     */
+    public static String getStrDate(@NonNull SimpleDateFormat dateFormat, int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day); // 日付をカレンダークラスにセット
+        return dateFormat.format(calendar.getTime());   // フォーマットを指定してDivingLogクラスにセット
+    }
+
 }

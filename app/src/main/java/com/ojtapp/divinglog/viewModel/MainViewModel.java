@@ -294,14 +294,17 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         divingLog.setMemberNavigate(memberNavigate);
         divingLog.setMemo(memo);
 
-        Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat(LogConstant.FORMAT_DATE, Locale.JAPAN);
         SimpleDateFormat timeFormat = new SimpleDateFormat(LogConstant.FORMAT_TIME, Locale.JAPAN);
 
-        divingLog.setDate(getStrDate(calendar, dateFormat));
-        divingLog.setTimeStart(getStrTimeStart(calendar, timeFormat));
-        divingLog.setTimeEnd(getStrTimeEnd(calendar, timeFormat));
-        divingLog.setTimeDive(getStrTimeDive(calendar, timeFormat));
+        divingLog.setDate(ConversionUtil.getStrDate(dateFormat, year, month, day));
+        divingLog.setTimeStart(ConversionUtil.getStrTime(timeFormat, hourStart, minuteStart));
+        divingLog.setTimeEnd(ConversionUtil.getStrTime(timeFormat, hourEnd, minuteEnd));
+
+        int[] time = getDiveTime();
+        int hour = time[0];
+        int minute = time[1];
+        divingLog.setTimeDive(ConversionUtil.getStrTime(timeFormat, hour, minute));
 
         Uri uri = ImageViewBindingAdapter.uri;
         if (null != uri) {
@@ -326,52 +329,11 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
     }
 
     /**
-     * 日付をString型のフォーマットに変換して返す
+     * ダイビング総時間を配列で返す
      *
-     * @param calendar   カレンダークラス
-     * @param dateFormat 日付用のフォーマット
-     * @return フォーマットを適用した日付
+     * @return ダイビング総時間([0] = 時間 、 [1] = 分 ）
      */
-    private String getStrDate(@NonNull Calendar calendar, @NonNull SimpleDateFormat dateFormat) {
-        Log.d("MV", "y=" + year + " ,m=" + month + " , d=" + day);
-        calendar.set(year, month, day); // 日付をカレンダークラスにセット
-        return dateFormat.format(calendar.getTime());   // フォーマットを指定してDivingLogクラスにセット
-    }
-
-    /**
-     * 開始時間をString型のフォーマットに変換して返す
-     *
-     * @param calendar   カレンダークラス
-     * @param timeFormat 時間用のフォーマット
-     * @return フォーマットを適用した開始時間
-     */
-    private String getStrTimeStart(@NonNull Calendar calendar, @NonNull SimpleDateFormat timeFormat) {
-        calendar.set(Calendar.HOUR_OF_DAY, hourStart);
-        calendar.set(Calendar.MINUTE, minuteStart);
-        return timeFormat.format(calendar.getTime());
-    }
-
-    /**
-     * 終了時間をString型のフォーマットに変換して返す
-     *
-     * @param calendar   カレンダークラス
-     * @param timeFormat 時間用のフォーマット
-     * @return フォーマットを適用した終了時間
-     */
-    private String getStrTimeEnd(@NonNull Calendar calendar, @NonNull SimpleDateFormat timeFormat) {
-        calendar.set(Calendar.HOUR_OF_DAY, hourEnd);
-        calendar.set(Calendar.MINUTE, minuteEnd);
-        return timeFormat.format(calendar.getTime());
-    }
-
-    /**
-     * ダイビング総時間をString型のフォーマットに変換して返す
-     *
-     * @param calendar   カレンダークラス
-     * @param timeFormat 時間用のフォーマット
-     * @return フォーマットを適用した総時間
-     */
-    private String getStrTimeDive(@NonNull Calendar calendar, @NonNull SimpleDateFormat timeFormat) {
+    private int[] getDiveTime() {
         int hour = hourEnd - hourStart;
         int minute;
         if (minuteEnd < minuteStart) {
@@ -380,9 +342,10 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         } else {
             minute = minuteEnd - minuteStart;
         }
-        calendar.set(Calendar.HOUR, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        Log.d(TAG, "time = " + timeFormat.format(calendar.getTimeInMillis()));
-        return timeFormat.format(calendar.getTimeInMillis());
+
+        int[] time = new int[2];
+        time[0] = hour;
+        time[1] = minute;
+        return time;
     }
 }
