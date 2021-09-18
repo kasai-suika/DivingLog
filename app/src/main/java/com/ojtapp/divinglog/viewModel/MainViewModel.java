@@ -220,8 +220,8 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         airStart = ConversionUtil.getStrFromInt(divingLog.getAirStart());
         airEnd = ConversionUtil.getStrFromInt(divingLog.getAirEnd());
         weather.setValue(divingLog.getWeather());
-        temp.setValue(ConversionUtil.getStrFromInt(divingLog.getTemp()));
-        tempWater = ConversionUtil.getStrFromInt(divingLog.getTempWater());
+        temp.setValue(ConversionUtil.getStrFromDouble(divingLog.getTemp()));
+        tempWater = ConversionUtil.getStrFromDouble(divingLog.getTempWater());
         visibility = ConversionUtil.getStrFromInt(divingLog.getVisibility());
         member = divingLog.getMember();
         memberNavigate = divingLog.getMemberNavigate();
@@ -286,9 +286,9 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         divingLog.setAirStart(ConversionUtil.getIntFromStr(airStart));
         divingLog.setAirEnd(ConversionUtil.getIntFromStr(airEnd));
         divingLog.setAirDive(getDiveAir());
-        divingLog.setWeather((String) weather.getValue());
-        divingLog.setTemp(ConversionUtil.getIntFromStr((String) temp.getValue()));
-        divingLog.setTempWater(ConversionUtil.getIntFromStr(tempWater));
+        divingLog.setWeather(weather.getValue());
+        divingLog.setTemp(ConversionUtil.getDoubleFromStr(temp.getValue()));
+        divingLog.setTempWater(ConversionUtil.getDoubleFromStr(tempWater));
         divingLog.setVisibility(ConversionUtil.getIntFromStr(visibility));
         divingLog.setMember(member);
         divingLog.setMemberNavigate(memberNavigate);

@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,8 +87,9 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String> {
             // 気温
             JSONObject mainJSON = rootJSON.getJSONObject("main");
             String kelvinTemp = mainJSON.getString("temp");
-            int intTemp = (int) (Float.parseFloat(kelvinTemp) - 273.15);
-            temp = String.valueOf(intTemp); //TODO:小数点ありきで保存できると〇。INTではなくTEXTでDB保存する？
+            double intTemp = Double.parseDouble(kelvinTemp) - 273.1;
+            DecimalFormat df = new DecimalFormat("###.#");
+            temp = df.format(intTemp);
 
         } catch (JSONException e) {
             e.printStackTrace();

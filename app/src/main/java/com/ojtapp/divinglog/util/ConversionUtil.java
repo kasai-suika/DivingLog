@@ -58,6 +58,21 @@ public class ConversionUtil {
     }
 
     /**
+     * String型をdouble型に変換する。
+     * データがない場合は-1を返す。
+     *
+     * @param str 　String型のデータ
+     * @return double型に変換したデータ
+     */
+    public static double getDoubleFromStr(@Nullable String str) {
+        if (null == str) {
+            return NO_DATA;
+        } else {
+            return Double.parseDouble(str);
+        }
+    }
+
+    /**
      * int型をString型に変換する。
      * データがない場合は空文字を返す。
      *
@@ -69,6 +84,21 @@ public class ConversionUtil {
             return null;
         } else {
             return String.valueOf(intData);
+        }
+    }
+
+    /**
+     * double型をString型に変換する。
+     * データがない場合は空文字を返す。
+     *
+     * @param doubleData 　double型のデータ
+     * @return String型に変換したデータ
+     */
+    public static String getStrFromDouble(double doubleData) {
+        if (ConversionUtil.NO_DATA == doubleData) {
+            return null;
+        } else {
+            return String.valueOf(doubleData);
         }
     }
 
@@ -110,7 +140,7 @@ public class ConversionUtil {
      */
     public static String getWeatherSiteURL(String cityName) {
         String[] weatherSiteURL = LogConstant.WEATHER_SITE_URL;
-        weatherSiteURL[2] = cityName;
+        weatherSiteURL[1] = cityName;
         return String.join("", weatherSiteURL);
     }
 }

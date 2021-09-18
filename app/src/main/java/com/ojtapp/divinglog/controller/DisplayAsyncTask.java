@@ -179,11 +179,11 @@ public class DisplayAsyncTask extends AsyncTask<Integer, Integer, List<DivingLog
                 cursor.getColumnIndexOrThrow(LogConstant.WEATHER));
         log.setWeather(weather);
         // 気温
-        int temp = cursor.getInt(
+        double temp = cursor.getDouble(
                 cursor.getColumnIndexOrThrow(LogConstant.TEMP));
         log.setTemp(temp);
         // 水温
-        int waterTemp = cursor.getInt(
+        double waterTemp = cursor.getDouble(
                 cursor.getColumnIndexOrThrow(LogConstant.TEMP_WATER));
         log.setTempWater(waterTemp);
         // 透明度
