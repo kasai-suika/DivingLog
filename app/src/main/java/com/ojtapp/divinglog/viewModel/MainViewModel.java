@@ -14,7 +14,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.ojtapp.divinglog.BindingAdapter.ImageViewBindingAdapter;
-import com.ojtapp.divinglog.LogConstant;
+import com.ojtapp.divinglog.constant.LogConstant;
 import com.ojtapp.divinglog.appif.DivingLog;
 import com.ojtapp.divinglog.controller.DeleteAsyncTask;
 import com.ojtapp.divinglog.controller.RegisterAsyncTask;

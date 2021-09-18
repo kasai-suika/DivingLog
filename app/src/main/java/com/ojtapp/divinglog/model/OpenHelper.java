@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.NonNull;
 
-import com.ojtapp.divinglog.LogConstant;
+import com.ojtapp.divinglog.constant.LogConstant;
 
 public class OpenHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 9;

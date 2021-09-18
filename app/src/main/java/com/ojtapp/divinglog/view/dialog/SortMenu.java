@@ -1,4 +1,4 @@
-package com.ojtapp.divinglog;
+package com.ojtapp.divinglog.view.dialog;
 
 import android.util.Log;
 

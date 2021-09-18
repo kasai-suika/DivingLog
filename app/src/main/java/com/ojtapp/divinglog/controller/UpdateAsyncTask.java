@@ -9,7 +9,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.ojtapp.divinglog.LogConstant;
+import com.ojtapp.divinglog.constant.LogConstant;
 import com.ojtapp.divinglog.appif.DivingLog;
 import com.ojtapp.divinglog.model.OpenHelper;
 

@@ -9,7 +9,7 @@ import android.os.ParcelFileDescriptor;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.ojtapp.divinglog.LogConstant;
+import com.ojtapp.divinglog.constant.LogConstant;
 
 import java.io.FileDescriptor;
 import java.io.IOException;

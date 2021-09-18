@@ -1,4 +1,6 @@
-package com.ojtapp.divinglog;
+package com.ojtapp.divinglog.constant;
+
+import com.ojtapp.divinglog.BuildConfig;
 
 public class LogConstant {
     public static final String TABLE_NAME = "divingLog";
