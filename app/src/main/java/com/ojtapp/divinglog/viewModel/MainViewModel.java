@@ -14,8 +14,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.ojtapp.divinglog.BindingAdapter.ImageViewBindingAdapter;
-import com.ojtapp.divinglog.constant.LogConstant;
 import com.ojtapp.divinglog.appif.DivingLog;
+import com.ojtapp.divinglog.constant.LogConstant;
 import com.ojtapp.divinglog.controller.DeleteAsyncTask;
 import com.ojtapp.divinglog.controller.RegisterAsyncTask;
 import com.ojtapp.divinglog.controller.UpdateAsyncTask;
@@ -181,21 +181,35 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         updateAsyncTask.execute(divingLog);
     }
 
+    /**
+     * 伊豆の天気を取得する
+     *
+     * @param view クリックされたボタン
+     */
     public void onIzuWeatherClick(View view) {
         getWeather("Izu");
     }
 
+    /**
+     * 沖縄の天気を取得する
+     *
+     * @param view クリックされたボタン
+     */
     public void onOkinawaWeatherClick(View view) {
         getWeather("Okinawa");
     }
 
+    /**
+     * 天気情報サイトから引数で指定された場所の天気を取得する
+     *
+     * @param place 天気を取得したい場所
+     */
     private void getWeather(@NonNull String place) {
         WeatherInfoReceiver weatherInfoReceiver = new WeatherInfoReceiver();
         weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiver.WeatherInfoCallback() {
             @Override
             public void onSuccess(String weather, String temp) {
-                MainViewModel.this.weather.setValue(weather);
-                MainViewModel.this.temp.setValue(temp);
+                setWeatherInfo(weather, temp);
             }
 
             @Override
@@ -204,6 +218,27 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
             }
         });
         weatherInfoReceiver.execute(place);
+    }
+
+    /**
+     * Viewに天気の情報を反映する
+     *
+     * @param weather 天気
+     * @param temp 温度
+     */
+    private void setWeatherInfo(@Nullable String weather, @Nullable String temp) {
+        String nullStr = "取得不能";
+        if (null == weather) {
+            this.weather.setValue(nullStr);
+        } else {
+            this.weather.setValue(weather);
+        }
+
+        if (null == temp) {
+            this.temp.setValue(nullStr);
+        } else {
+            this.temp.setValue(temp);
+        }
     }
 
     /**
