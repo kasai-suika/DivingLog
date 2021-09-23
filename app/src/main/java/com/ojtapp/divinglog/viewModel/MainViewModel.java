@@ -214,7 +214,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
 
             @Override
             public void onFailure() {
-                Log.e(TAG, "天気が正常に取得されませんでした。");
+                setWeatherInfo(null, null);
             }
         });
         weatherInfoReceiver.execute(place);
@@ -224,7 +224,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      * Viewに天気の情報を反映する
      *
      * @param weather 天気
-     * @param temp 温度
+     * @param temp    温度
      */
     private void setWeatherInfo(@Nullable String weather, @Nullable String temp) {
         String nullStr = "取得不能";

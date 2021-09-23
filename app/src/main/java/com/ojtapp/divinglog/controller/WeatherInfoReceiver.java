@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.Map;
 
-public class WeatherInfoReceiver extends AsyncTask<String, String, String> {
+public class WeatherInfoReceiver extends AsyncTask<String, String, String[]> {
     private static final String TAG = WeatherInfoReceiver.class.getSimpleName();
 
     /**
@@ -32,21 +32,24 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String> {
     private WeatherInfoCallback weatherInfoCallback;
 
     @Override
-    protected String doInBackground(String... params) {
+    protected String[] doInBackground(String... params) {
         String cityName = params[0];
         String urlStr = ConversionUtil.getWeatherSiteURL(cityName);
-        String result = " ";
+        String isStr = " ";
+        String weather = " ";
+        String temp = " ";
 
         HttpURLConnection con = null;
         InputStream is = null;
 
+        // URL先に接続し文字列データを取得する
         try {
             URL url = new URL(urlStr);
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.connect();
             is = con.getInputStream();
-            result = is2String(is);
+            isStr = is2String(is);
         } catch (IOException ex) {
             Log.e(TAG, "error = " + ex);
         } finally {
@@ -62,18 +65,11 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String> {
                 }
             }
         }
-        return result;
-    }
 
-    @Override
-    public void onPostExecute(String result) {
-        super.onPostExecute(result);
-        String weather = "";
-        String temp = "";
-
+        // 取得した文字列データをJSONに変換し、必要な情報を取得する
         try {
             // 天気
-            JSONObject rootJSON = new JSONObject(result);
+            JSONObject rootJSON = new JSONObject(isStr);
             JSONArray weatherJSON = rootJSON.getJSONArray("weather");
             JSONObject weatherJSON0 = weatherJSON.getJSONObject(0);
             String weatherId = weatherJSON0.getString("id");
@@ -90,10 +86,19 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String> {
             double intTemp = Double.parseDouble(kelvinTemp) - 273.1;
             DecimalFormat df = new DecimalFormat("###.#");
             temp = df.format(intTemp);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        return new String[]{weather, temp};
+    }
+
+    @Override
+    public void onPostExecute(String[] result) {
+        super.onPostExecute(result);
+        String weather = result[0];
+        String temp = result[1];
+
         if (null != weatherInfoCallback) {
             if (null != result) {
                 weatherInfoCallback.onSuccess(weather, temp);
@@ -103,9 +108,16 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String> {
         }
     }
 
+    /**
+     * URL先から取得したバイトデータを文字列に変換
+     *
+     * @param is URL先から取得したバイトデータ
+     * @return バイトデータを文字列に変換したもの
+     * @throws IOException
+     */
     private String is2String(InputStream is) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         char[] b = new char[1024];
         int line;
         while (0 <= (line = reader.read(b))) {
