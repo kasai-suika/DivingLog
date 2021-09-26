@@ -187,7 +187,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      * @param view クリックされたボタン
      */
     public void onIzuWeatherClick(View view) {
-        getWeather("Izu");
+        updateWeatherInfo("Izu");
     }
 
     /**
@@ -196,7 +196,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      * @param view クリックされたボタン
      */
     public void onOkinawaWeatherClick(View view) {
-        getWeather("Okinawa");
+        updateWeatherInfo("Okinawa");
     }
 
     /**
@@ -204,7 +204,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      *
      * @param place 天気を取得したい場所
      */
-    private void getWeather(@NonNull String place) {
+    private void updateWeatherInfo(@NonNull String place) {
         WeatherInfoReceiver weatherInfoReceiver = new WeatherInfoReceiver();
         weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiver.WeatherInfoCallback() {
             @Override
