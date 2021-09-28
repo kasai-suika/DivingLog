@@ -10,3 +10,7 @@ Excel.ReadCells Instance: ExcelInstance StartColumn: $'''A''' StartRow: 3 EndCol
 Excel.CloseAndSave Instance: ExcelInstance
 Text.Replace Text: ExcelData TextToFind: $''',''' IsRegEx: True IgnoreCase: False ReplaceWith: $'''\\t''' ActivateEscapeSequences: True Result=> Replaced
 Display.ShowMessage Title: $'''a''' Message: Replaced Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: True ButtonPressed=> ButtonPressed
+
+
+
+https://akira55.com/sumifs/
