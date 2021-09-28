@@ -1,0 +1,12 @@
+File.ReadCSV CSVFile: $'''C:\\Users\\suika\\Documents\\例.csv''' Encoding: File.CSVEncoding.UTF8 TrimFields: True FirstLineContainsColumnNames: False ColumnsSeparator: File.CSVColumnsSeparator.SystemDefault CSVTable=> CSVTable
+Excel.LaunchAndOpen Path: $'''C:\\Users\\suika\\Documents\\マクロ.xlsx''' Visible: True ReadOnly: False LoadAddInsAndMacros: False Instance=> ExcelInstance
+Excel.ActivateWorksheetByName Instance: ExcelInstance Name: $'''Redmine情報'''
+Excel.WriteCell Instance: ExcelInstance Value: CSVTable Column: $'''B''' Row: 3
+DateTime.Local DateTimeFormat: DateTime.DateTimeFormat.DateAndTime CurrentDateTime=> CurrentDateTime
+Excel.WriteCell Instance: ExcelInstance Value: CurrentDateTime Column: $'''G''' Row: 1
+DISABLE Excel.Advanced.RunMacro Instance: ExcelInstance Macro: ``
+Excel.GetFirstFreeColumnRow Instance: ExcelInstance FirstFreeColumn=> FirstFreeColumn FirstFreeRow=> FirstFreeRow
+Excel.ReadCells Instance: ExcelInstance StartColumn: $'''A''' StartRow: 3 EndColumn: FirstFreeColumn - 1 EndRow: FirstFreeRow - 1 ReadAsText: True FirstLineIsHeader: False RangeValue=> ExcelData
+Excel.CloseAndSave Instance: ExcelInstance
+Text.Replace Text: ExcelData TextToFind: $''',''' IsRegEx: True IgnoreCase: False ReplaceWith: $'''\\t''' ActivateEscapeSequences: True Result=> Replaced
+Display.ShowMessage Title: $'''a''' Message: Replaced Icon: Display.Icon.None Buttons: Display.Buttons.OK DefaultButton: Display.DefaultButton.Button1 IsTopMost: True ButtonPressed=> ButtonPressed
