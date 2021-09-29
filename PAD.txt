@@ -14,3 +14,53 @@ Display.ShowMessage Title: $'''a''' Message: Replaced Icon: Display.Icon.None Bu
 
 
 https://akira55.com/sumifs/
+
+
+Option Explicit
+
+Sub Syukei04()
+ 
+    Dim ws01, ws02 As Worksheet
+    Dim lRow, mRow, mData, I As Long
+    Dim Hani01, Hani02 As Variant
+    Dim mName, mName2 As String
+    Dim mDay, mDay2 As Date
+    
+ 
+    Set ws01 = Worksheets("データ") 'ワークシート名をセット
+    Set ws02 = Worksheets("集計表") 'ワークシート名をセット
+    
+    lRow = ws01.Cells(Rows.Count, "C").End(xlUp).Row  'ワークシート（データ一覧）のC列の最終行
+     
+    Set Hani01 = ws01.Range("D4:D" & lRow) '工数のC列を「Hani01」にセット
+    
+    mRow = 4
+    
+    mData = lRow - mRow
+    
+    'TODO ws02へ名前の入力自動化関数を作る
+    'TODO ws02へ日付の入力自動化関数を作る
+    'TODO 元の関数に上2つとこの関数を入れる形にする
+ 
+    Do Until ws02.Cells(mRow, "B") = ""  'B列（名前）を1行ずつづれて名前がなくなるまで繰り返す。
+    
+        For I = 0 To 4   'ワークシート（集計表）C列～I列まで順番に繰り返す。
+        
+            mName = ws01.Cells(mRowOrigin + X, "B")
+            mDay = ws01.Cells(mRowOrigin + X, "C")
+            mName2 = ws02.Cells(mRow, "B")
+            mDay2 = ws02.Cells(3, 3 + I)
+                
+                
+            ws02.Cells(mRow, 3 + I) = WorksheetFunction.SumIfs(Hani01, ws01.Range("B4:B" & lRow), mName2, ws01.Range("C4:C" & lRow), mDay2)
+                
+            '名前＋日付毎に集計結果を表に記入します。
+            
+            
+        Next I
+       
+        mRow = mRow + 1
+    
+    Loop
+ 
+End Sub
