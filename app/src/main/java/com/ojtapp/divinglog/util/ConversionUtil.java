@@ -56,9 +56,8 @@ public class ConversionUtil {
     public static int getIntFromStr(@Nullable String str) {
         if (null == str) {
             return NO_DATA;
-        } else {
-            return Integer.parseInt(str);
         }
+        return Integer.parseInt(str);
     }
 
     /**
@@ -71,9 +70,8 @@ public class ConversionUtil {
     public static double getDoubleFromStr(@Nullable String str) {
         if (null == str) {
             return NO_DATA;
-        } else {
-            return Double.parseDouble(str);
         }
+        return Double.parseDouble(str);
     }
 
     /**
@@ -86,9 +84,8 @@ public class ConversionUtil {
     public static String getStrFromInt(int intData) {
         if (ConversionUtil.NO_DATA == intData) {
             return null;
-        } else {
-            return String.valueOf(intData);
         }
+        return String.valueOf(intData);
     }
 
     /**
@@ -101,9 +98,8 @@ public class ConversionUtil {
     public static String getStrFromDouble(double doubleData) {
         if (ConversionUtil.NO_DATA == doubleData) {
             return null;
-        } else {
-            return String.valueOf(doubleData);
         }
+        return String.valueOf(doubleData);
     }
 
     /**
