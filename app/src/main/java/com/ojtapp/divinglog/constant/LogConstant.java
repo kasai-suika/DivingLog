@@ -1,7 +1,5 @@
 package com.ojtapp.divinglog.constant;
 
-import com.ojtapp.divinglog.BuildConfig;
-
 public class LogConstant {
     public static final String TABLE_NAME = "divingLog";
     public static final String LOG_ID = "logId";
@@ -44,5 +42,5 @@ public class LogConstant {
     /**
      * 天気取得サイトのURL
      */
-    public static final String[] WEATHER_SITE_URL = {"https://api.openweathermap.org/data/2.5/weather?q=", "", "&appid=", BuildConfig.API_KEY};
+    public static final String FORMAT_WEATHER_SITE_URL = "https://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s";
 }

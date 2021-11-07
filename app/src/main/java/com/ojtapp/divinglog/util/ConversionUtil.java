@@ -9,14 +9,18 @@ import android.os.ParcelFileDescriptor;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.ojtapp.divinglog.BuildConfig;
 import com.ojtapp.divinglog.constant.LogConstant;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class ConversionUtil {
+
+
     /**
      * データがない場合の定数
      */
@@ -139,8 +143,6 @@ public class ConversionUtil {
      * @return 天気取得サイトのURL
      */
     public static String getWeatherSiteURL(String cityName) {
-        String[] weatherSiteURL = LogConstant.WEATHER_SITE_URL;
-        weatherSiteURL[1] = cityName;
-        return String.join("", weatherSiteURL);
+        return String.format(Locale.JAPAN, LogConstant.FORMAT_WEATHER_SITE_URL, cityName, BuildConfig.API_KEY);
     }
 }
