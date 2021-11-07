@@ -3,10 +3,10 @@ package com.ojtapp.divinglog.controller;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.ojtapp.divinglog.util.ConversionUtil;
-import com.ojtapp.divinglog.util.WeatherUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.Map;
 
 public class WeatherInfoReceiver extends AsyncTask<String, String, String[]> {
@@ -30,6 +31,69 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String[]> {
      */
     @Nullable
     private WeatherInfoCallback weatherInfoCallback;
+
+    /**
+     * 天気と天気IDを持つMap
+     */
+    @NonNull
+    private final Map<String, String> weatherMap = new HashMap<String, String>() {
+        {
+            put("200", "小雨と雷雨");
+            put("201", "雨と雷雨");
+            put("202", "大雨と雷雨");
+            put("210", "光雷雨");
+            put("211", "雷雨");
+            put("212", "重い雷雨");
+            put("221", "ぼろぼろの雷雨");
+            put("230", "小雨と雷雨");
+            put("231", "霧雨と雷雨");
+            put("232", "重い霧雨と雷雨");
+            put("300", "光強度霧雨");
+            put("301", "霧雨");
+            put("302", "重い強度霧雨");
+            put("310", "光強度霧雨の雨");
+            put("311", "霧雨の雨");
+            put("312", "重い強度霧雨の雨");
+            put("313", "にわかの雨と霧雨");
+            put("314", "重いにわかの雨と霧雨");
+            put("321", "にわか霧雨");
+            put("500", "小雨");
+            put("501", "適度な雨");
+            put("502", "重い強度の雨");
+            put("503", "非常に激しい雨");
+            put("504", "極端な雨");
+            put("511", "雨氷");
+            put("520", "光強度のにわかの雨");
+            put("521", "にわかの雨");
+            put("522", "重い強度にわかの雨");
+            put("531", "不規則なにわかの雨");
+            put("600", "小雪");
+            put("601", "雪");
+            put("602", "大雪");
+            put("611", "みぞれ");
+            put("612", "にわかみぞれ");
+            put("615", "光雨と雪");
+            put("616", "雨や雪");
+            put("620", "光のにわか雪");
+            put("621", "にわか雪");
+            put("622", "重いにわか雪");
+            put("701", "ミスト");
+            put("711", "煙");
+            put("721", "ヘイズ");
+            put("731", "砂、ほこり旋回する");
+            put("741", "霧");
+            put("751", "砂");
+            put("761", "ほこり");
+            put("762", "火山灰");
+            put("771", "スコール");
+            put("781", "竜巻");
+            put("800", "晴天");
+            put("801", "薄い雲");
+            put("802", "雲");
+            put("803", "曇りがち");
+            put("804", "厚い雲");
+        }
+    };
 
     @Override
     protected String[] doInBackground(String... params) {
@@ -73,7 +137,6 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String[]> {
             JSONArray weatherJSON = rootJSON.getJSONArray("weather");
             JSONObject weatherJSON0 = weatherJSON.getJSONObject(0);
             String weatherId = weatherJSON0.getString("id");
-            Map<String, String> weatherMap = WeatherUtil.getWeatherMap();
             if (weatherMap.containsKey(weatherId)) {
                 weather = weatherMap.get(weatherId);
             } else {
@@ -113,9 +176,9 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String[]> {
      *
      * @param is URL先から取得したバイトデータ
      * @return バイトデータを文字列に変換したもの
-     * @throws IOException
+     * @throws IOException 　文字列変換時にI/Oエラーが起こった場合にthrowsされる
      */
-    private String is2String(InputStream is) throws IOException {
+    private String is2String(@NonNull InputStream is) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         StringBuilder sb = new StringBuilder();
         char[] b = new char[1024];
