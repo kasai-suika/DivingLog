@@ -30,10 +30,6 @@ public class LogDetailFragment extends Fragment {
      * 編集ボタン押下のコールバック
      */
     private OnDetailFragmentEditButtonListener callback;
-    /**
-     * バインディングクラス
-     */
-    private FragmentDetailLogBinding binding;
     private DivingLog divingLog;
 
     /**
@@ -62,14 +58,12 @@ public class LogDetailFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceStat) {
         Bundle args = getArguments();
+        FragmentDetailLogBinding binding = null;
         if (null != args) {
             divingLog = (DivingLog) args.getSerializable(LOG_KEY);
-            if (null != divingLog) {
-                MainViewModel viewModel = new MainViewModel(requireContext(), divingLog);
-                binding = DataBindingUtil.inflate(inflater, R.layout.fragment_detail_log, container, false);
-                binding.setMain(viewModel);
-                return binding.getRoot();
-            }
+            MainViewModel viewModel = new MainViewModel(requireContext(), divingLog);
+            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_detail_log, container, false);
+            binding.setMain(viewModel);
         }
         return binding.getRoot();
     }

@@ -5,18 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="main"
             type="com.ojtapp.divinglog.viewModel.MainViewModel" />
-
-        <variable
-            name="uri"
-            type="android.net.Uri" />
-
-        <variable
-            name="context"
-            type="android.content.Context" />
     </data>
 
     <LinearLayout
@@ -456,8 +447,8 @@
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/content_description_display_picture"
                     android:scaleType="fitStart"
-                    app:imageContext="@{context}"
-                    app:imageUri="@{uri}" />
+                    app:imageContext="@{main.context}"
+                    app:imageUri="@{main.uri}" />
 
                 <TextView
                     android:layout_width="match_parent"

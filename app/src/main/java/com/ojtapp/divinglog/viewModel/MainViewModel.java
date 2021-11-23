@@ -13,7 +13,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.ojtapp.divinglog.BindingAdapter.ImageViewBindingAdapter;
 import com.ojtapp.divinglog.appif.DivingLog;
 import com.ojtapp.divinglog.constant.LogConstant;
 import com.ojtapp.divinglog.controller.DeleteAsyncTask;
@@ -34,6 +33,10 @@ import java.util.Optional;
 
 public class MainViewModel extends ViewModel implements ClickHandlers {
     private static final String TAG = MainViewModel.class.getSimpleName();
+    public MutableLiveData<Uri> uri = new MutableLiveData<>();
+    public MutableLiveData<Context> context = new MutableLiveData<>();
+    public MutableLiveData<String> weather = new MutableLiveData<>();
+    public MutableLiveData<String> temp = new MutableLiveData<>();
     public String diveNumber;
     public String place;
     public String point;
@@ -41,8 +44,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
     public String depthAve;
     public String airStart;
     public String airEnd;
-    public MutableLiveData<String> weather = new MutableLiveData<>();
-    public MutableLiveData<String> temp = new MutableLiveData<>();
     public String tempWater;
     public String visibility;
     public String memberNavigate;
@@ -51,7 +52,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
     public String strDate;
     public String strTimeDive;
     public String strAirDive;
-    public Uri uri;
     public int year;
     public int month;
     public int day;
@@ -74,6 +74,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      */
     public MainViewModel(@NonNull Context context, @Nullable DivingLog divingLog) {
         weakReference = new WeakReference<>(context);
+        this.context.setValue(context);
         if (null != divingLog) {
             this.divingLog = divingLog;
             setDataToLayout(divingLog);
@@ -87,7 +88,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      */
     @Override
     public void onMakeClick(View view) {
-        Log.d("VM", "onMakeClick");
         // -----【DB】保存処理--------------
         RegisterAsyncTask registerAsyncTask = new RegisterAsyncTask(weakReference.get());
         registerAsyncTask.setOnCallBack(new RegisterAsyncTask.RegisterCallback() {
@@ -247,6 +247,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      * @param divingLog データを持っているDivingLogクラス
      */
     private void setDataToLayout(DivingLog divingLog) {
+        Log.d("ViewModel", "in setDataToLayout");
         diveNumber = String.valueOf(divingLog.getDivingNumber());
         place = divingLog.getPlace();
         point = divingLog.getPoint();
@@ -288,21 +289,16 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
             defaultEndTimeOpt.ifPresent(cal::setTime);  //TODO ifPresentOrElse
             hourEnd = cal.get(Calendar.HOUR_OF_DAY);
             minuteEnd = cal.get(Calendar.MINUTE);
+
+            String pictureUri = divingLog.getPictureUri();
+            uri.setValue(Uri.parse(pictureUri));
+            context.setValue(weakReference.get());
         } catch (ParseException e) {
             Log.e(TAG, "Time's Error : " + e);
         }
 
-// TODO 模索中
-//        try {
-//            String pictureUri = divingLog.getPictureUri();
-//            if (null != pictureUri) {
-//                uri = Uri.parse(pictureUri);
-//                Bitmap bitmap = ConversionUtil.getBitmapFromUri(uri, requireContext());
-//                picture.setImageBitmap(bitmap);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        String pictureUri = divingLog.getPictureUri();
+        uri.setValue(Uri.parse(pictureUri));
     }
 
     /**
@@ -311,8 +307,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      * @param divingLog 　格納先のDivingLogクラス
      */
     private void setDateToDivingLog(DivingLog divingLog) {
-        Log.d("setDateToDivingLo", "weather=" + weather);
-        Log.d("setDateToDivingLo", "temp=" + temp);
         divingLog.setDiveNumber(Integer.parseInt(diveNumber));
         divingLog.setPlace(place);
         divingLog.setPoint(point);
@@ -341,10 +335,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         int minute = time[1];
         divingLog.setTimeDive(ConversionUtil.getStrTime(timeFormat, hour, minute));
 
-        Uri uri = ImageViewBindingAdapter.uri;
-        if (null != uri) {
-            divingLog.setPictureUri(uri.toString());
-        }
+        divingLog.setPictureUri(uri.getValue().toString());
     }
 
     /**

@@ -31,9 +31,9 @@ public class LogEditFragment extends Fragment {
      */
     private static final String LOG_KEY = "DIVE_LOG";
     /**
-     * バインディングクラス
+     * ViewModel
      */
-    private FragmentEditLogBinding binding;
+    private MainViewModel viewModel;
 
     /**
      * デフォルトコンストラクタ
@@ -61,15 +61,12 @@ public class LogEditFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceStat) {
         Bundle args = getArguments();
-        DivingLog divingLog;
+        FragmentEditLogBinding binding = null;
         if (null != args) {
-            divingLog = (DivingLog) args.getSerializable(LOG_KEY);
-            if (null != divingLog) {
-                MainViewModel viewModel = new MainViewModel(requireContext(), divingLog);
-                binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_log, container, false);
-                binding.setMain(viewModel);
-                return binding.getRoot();
-            }
+            DivingLog divingLog = (DivingLog) args.getSerializable(LOG_KEY);
+            viewModel = new MainViewModel(requireContext(), divingLog);
+            binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_log, container, false);
+            binding.setMain(viewModel);
         }
         return binding.getRoot();
     }
@@ -96,8 +93,7 @@ public class LogEditFragment extends Fragment {
             Context context = getContext();
             if ((resultData != null) && (context != null)) {
                 Uri uri = resultData.getData();
-                binding.setUri(uri);
-                binding.setContext(requireContext());
+                viewModel.uri.setValue(uri);
 
                 // URIの権限を保持する
                 final int takeFlags = resultData.getFlags()
