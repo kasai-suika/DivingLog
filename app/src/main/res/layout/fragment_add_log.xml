@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="main"
+            type="com.ojtapp.divinglog.viewModel.MainViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="UselessParent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorLightGrey"
+                    android:text="@string/dive_number"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/add_dive_number"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="34dp"
+                        android:autofillHints="@string/hint"
+                        android:inputType="number"
+                        android:text="@={main.diveNumber}"
+                        tools:ignore="LabelFor" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/dive_number"
+                        android:textSize="17sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorLightGrey"
+                    android:text="@string/place"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/place_name"
+                        android:textSize="17sp" />
+
+                    <EditText
+                        android:id="@+id/add_place"
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="34dp"
+                        android:autofillHints="@string/hint"
+                        android:inputType="text"
+                        android:text="@={main.place}"
+                        tools:ignore="LabelFor" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/place_point"
+                        android:textSize="17sp" />
+
+                    <EditText
+                        android:id="@+id/add_point"
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="@string/hint"
+                        android:inputType="text"
+                        android:text="@={main.point}"
+                        tools:ignore="LabelFor" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorLightGrey"
+                    android:text="@string/date"
+                    android:textSize="20sp" />
+
+                <DatePicker
+                    android:id="@+id/add_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:day="@={main.day}"
+                    android:month="@={main.month}"
+                    android:year="@={main.year}" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorLightGrey"
+                    android:text="@string/time"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="90dp"
+                        android:text="@string/start"
+                        android:textSize="17sp" />
+
+                    <TimePicker
+                        android:id="@+id/add_time_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="30dp"
+                        android:hour="@={main.hourStart}"
+                        android:minute="@={main.minuteStart}"
+                        android:scaleX="0.7"
+                        android:scaleY="0.7"
+                        android:timePickerMode="spinner" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="90dp"
+                        android:text="@string/end"
+                        android:textSize="17sp" />
+
+                    <TimePicker
+                        android:id="@+id/add_time_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="30dp"
+                        android:hour="@={main.hourEnd}"
+                        android:minute="@={main.minuteEnd}"
+                        android:scaleX="0.7"
+                        android:scaleY="0.7"
+                        android:timePickerMode="spinner" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorLightGrey"
+                    android:text="@string/depth"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/max"
+                        android:textSize="17sp" />
+
+                    <EditText
+                        android:id="@+id/add_depth_max"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="@string/hint"
+                        android:inputType="number"
+                        android:text="@={main.depthMax}"
+                        tools:ignore="LabelFor" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/ave"
+                        android:textSize="17sp" />
+
+                    <EditText
+                        android:id="@+id/add_depth_ave"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="@string/hint"
+                        android:inputType="number"
+                        android:text="@={main.depthAve}"
+                        tools:ignore="LabelFor" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorLightGrey"
+                    android:text="@string/bar"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/start"
+                        android:textSize="17sp" />
+
+                    <EditText
+                        android:id="@+id/add_air_start"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="@string/hint"
+                        android:inputType="number"
+                        android:text="@={main.airStart}"
+                        tools:ignore="LabelFor" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/end"
+                        android:textSize="17sp" />
+
+                    <EditText
+                        android:id="@+id/add_air_end"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="@string/hint"
+                        android:inputType="number"
+                        android:text="@={main.airEnd}"
+                        tools:ignore="LabelFor" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorLightGrey"
+                    android:text="@string/condition"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/weather"
+                        android:textSize="17sp" />
+
+
+                    <Button
+                        android:id="@+id/button_weather_izu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="30dp"
+                        android:onClick="@{main.onIzuWeatherClick}"
+                        android:text="@string/weather_place_izu" />
+
+                    <Button
+                        android:id="@+id/button_weather_okinawa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:onClick="@{main.onOkinawaWeatherClick}"
+                        android:text="@string/weather_place_okinawa" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/tenki"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="80dp"
+                        android:autofillHints="@string/weather"
+                        android:hint="@string/weather"
+                        android:inputType="text"
+                        android:text="@={main.weather}" />
+
+                    <EditText
+                        android:id="@+id/kion"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:autofillHints="@string/temp"
+                        android:hint="@string/temp"
+                        android:inputType="text"
+                        android:text="@={main.temp}" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/temp_water"
+                        android:textSize="17sp" />
+
+                    <EditText
+                        android:id="@+id/add_temp_water"
+                        android:layout_width="123dp"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="@string/hint"
+                        android:inputType="number"
+                        android:text="@={main.tempWater}"
+                        tools:ignore="LabelFor" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/visibility"
+                        android:textSize="17sp" />
+
+                    <EditText
+                        android:id="@+id/add_visibility"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="@string/hint"
+                        android:inputType="number"
+                        android:text="@={main.visibility}"
+                        tools:ignore="LabelFor" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorLightGrey"
+                    android:text="@string/buddy"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/navi"
+                        android:textSize="17sp" />
+
+                    <EditText
+                        android:id="@+id/add_navi"
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="34dp"
+                        android:autofillHints="@string/hint"
+                        android:inputType="text"
+                        android:text="@={main.memberNavigate}"
+                        tools:ignore="LabelFor" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/member"
+                        android:textSize="17sp" />
+
+                    <EditText
+                        android:id="@+id/add_member"
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="@string/hint"
+                        android:inputType="text"
+                        android:text="@={main.member}"
+                        tools:ignore="LabelFor" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorLightGrey"
+                    android:text="@string/memo"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/add_memo"
+                    android:layout_width="370dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:autofillHints="@string/hint"
+                    android:inputType="text"
+                    android:text="@={main.memo}"
+                    tools:ignore="LabelFor" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorLightGrey"
+                    android:text="@string/picture"
+                    android:textSize="20sp" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/button_add_picture"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:clickable="true"
+                    android:contentDescription="@string/content_description_display_picture"
+                    app:srcCompat="@android:drawable/ic_input_add" />
+
+                <ImageView
+                    android:id="@+id/image_view_select_picture"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/content_description_display_picture"
+                    android:scaleType="fitStart"
+                    app:imageContext="@{main.context}"
+                    app:imageUri="@{main.uri}" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:background="@color/colorLightGrey"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/button_make_task"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="20dp"
+                    android:onClick="@{main.onMakeClick}"
+                    android:text="@string/button_make_task" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</layout>

@@ -1,7 +1,5 @@
 package com.ojtapp.divinglog.view.main;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,10 +13,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.ojtapp.divinglog.R;
+import com.ojtapp.divinglog.view.dialog.SortMenu;
 import com.ojtapp.divinglog.appif.DivingLog;
 import com.ojtapp.divinglog.controller.DisplayAsyncTask;
-import com.ojtapp.divinglog.view.detail.TaskActivity;
-import com.ojtapp.divinglog.view.detail.TaskDetailFragment;
+import com.ojtapp.divinglog.util.SharedPreferencesUtil;
 
 import java.util.List;
 
@@ -27,8 +25,12 @@ import java.util.List;
  */
 public class LogFragment extends Fragment {
     private static final String TAG = LogFragment.class.getSimpleName();
+    private OnListItemListener callback;
     private ListView listView;
-    private LogAdapter logAdapter;
+
+    public LogFragment() {
+    }
+
     /**
      * フラグメントのインスタンスを作成
      * {@inheritDoc}
@@ -48,49 +50,62 @@ public class LogFragment extends Fragment {
      * {@inheritDoc}
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceStat){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceStat) {
         return inflater.inflate(R.layout.fragment_log, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceStat){
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceStat) {
         super.onViewCreated(view, savedInstanceStat);
         // リスト表示のViewを結び付ける
         listView = view.findViewById(R.id.list_view_log);
-        // データを取得し、画面を更新処理
-        refreshView();
+        Log.d(TAG, "listView = " + listView);
 
         // リスト押下時
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DivingLog log = (DivingLog)parent.getItemAtPosition(position);
-
-                Intent intent = new Intent(getContext(), TaskActivity.class);
-                intent.putExtra(TaskActivity.MODE_KEY, TaskActivity.Mode.DETAIL_MOOD.value);
-                intent.putExtra(TaskActivity.TABLE_KEY, log);
-
-                startActivity(intent);
+                Log.d(TAG, "onItemClick");
+                DivingLog divingLog = (DivingLog) parent.getItemAtPosition(position);
+                callback.onListItem(divingLog);
             }
         });
+        // データを取得し、画面を更新処理
+        refreshView();
     }
 
-    private void refreshView(){
-        final Context context = requireContext();
-        //-------【DB】データ取得処理-------------
-        DisplayAsyncTask displayAsyncTask = new DisplayAsyncTask(context);
+    public void refreshView() {
+        Log.d(TAG, "refreshView()");
+        DisplayAsyncTask displayAsyncTask = new DisplayAsyncTask(requireContext());
 
         // コールバック処理
         displayAsyncTask.setOnCallBack(new DisplayAsyncTask.DisplayCallback() {
             @Override
-            public void onDisplay(List<DivingLog> logList) {
+            public void onSuccess(List<DivingLog> logList) {
+                Log.d(TAG, "データ取得に成功しました");
+                int memorySortMode = SharedPreferencesUtil.getSortMode(SharedPreferencesUtil.KEY_SORT_MODE, MainActivity.sharedPreferences);
+                SortMenu.sortDivingLog(logList, memorySortMode);
+
                 // Adapterの設定
-                LogAdapter logAdapter = new LogAdapter(context, R.layout.list_log_fragment, logList);
+                LogAdapter logAdapter = new LogAdapter(requireContext(), R.layout.list_log_item, logList);
                 listView.setAdapter(logAdapter);
+            }
+
+            @Override
+            public void onFailure() {
+                Log.e(TAG, "データ取得に失敗しました");
             }
         });
 
         // 非同期処理のメソッドに移動
         displayAsyncTask.execute(0);
+    }
+
+    public void setOnListItemListener(OnListItemListener callback) {
+        this.callback = callback;
+    }
+
+    public interface OnListItemListener {
+        void onListItem(DivingLog divingLog);
     }
 }
