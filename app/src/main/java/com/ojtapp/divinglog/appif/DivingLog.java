@@ -15,8 +15,8 @@ public class DivingLog implements Serializable {
     private int airEnd;
     private int airDive;
     private String weather;
-    private int temp;
-    private int tempWater;
+    private double temp;
+    private double tempWater;
     private int visibility;
     private String memberNavigate;
     private String member;
@@ -113,19 +113,19 @@ public class DivingLog implements Serializable {
         this.weather = weather;
     }
 
-    public int getTemp() {
+    public double getTemp() {
         return temp;
     }
 
-    public void setTemp(int temp) {
+    public void setTemp(double temp) {
         this.temp = temp;
     }
 
-    public int getTempWater() {
+    public double getTempWater() {
         return tempWater;
     }
 
-    public void setTempWater(int tempWater) {
+    public void setTempWater(double tempWater) {
         this.tempWater = tempWater;
     }
 

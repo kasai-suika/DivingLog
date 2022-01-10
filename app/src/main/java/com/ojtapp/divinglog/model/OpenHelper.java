@@ -6,10 +6,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.NonNull;
 
-import com.ojtapp.divinglog.LogConstant;
+import com.ojtapp.divinglog.constant.LogConstant;
 
 public class OpenHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
     private static final String DATABASE_NAME = "DivingLog.db";
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + LogConstant.TABLE_NAME + "(" +
@@ -27,8 +27,8 @@ public class OpenHelper extends SQLiteOpenHelper {
                     LogConstant.AIR_END + " INT, " +
                     LogConstant.AIR_DIVE + " INT, " +
                     LogConstant.WEATHER + " TEXT, " +
-                    LogConstant.TEMP + " INT, " +
-                    LogConstant.TEMP_WATER + " INT, " +
+                    LogConstant.TEMP + " REAL, " +
+                    LogConstant.TEMP_WATER + " REAL, " +
                     LogConstant.VISIBILITY + " INT, " +
                     LogConstant.MEMBER_NAVIGATE + " TEXT, " +
                     LogConstant.MEMBER + " TEXT, " +

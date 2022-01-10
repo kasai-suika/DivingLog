@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.ojtapp.divinglog.R;
-import com.ojtapp.divinglog.SortMenu;
+import com.ojtapp.divinglog.view.dialog.SortMenu;
 import com.ojtapp.divinglog.appif.DivingLog;
 import com.ojtapp.divinglog.controller.DisplayAsyncTask;
 import com.ojtapp.divinglog.util.SharedPreferencesUtil;

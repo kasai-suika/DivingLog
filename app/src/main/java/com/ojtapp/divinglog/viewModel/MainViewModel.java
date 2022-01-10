@@ -10,14 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.ojtapp.divinglog.BindingAdapter.ImageViewBindingAdapter;
-import com.ojtapp.divinglog.LogConstant;
 import com.ojtapp.divinglog.appif.DivingLog;
+import com.ojtapp.divinglog.constant.LogConstant;
 import com.ojtapp.divinglog.controller.DeleteAsyncTask;
 import com.ojtapp.divinglog.controller.RegisterAsyncTask;
 import com.ojtapp.divinglog.controller.UpdateAsyncTask;
+import com.ojtapp.divinglog.controller.WeatherInfoReceiver;
 import com.ojtapp.divinglog.util.ConversionUtil;
 import com.ojtapp.divinglog.view.dialog.DialogFragment;
 import com.ojtapp.divinglog.view.main.MainActivity;
@@ -32,6 +33,10 @@ import java.util.Optional;
 
 public class MainViewModel extends ViewModel implements ClickHandlers {
     private static final String TAG = MainViewModel.class.getSimpleName();
+    public MutableLiveData<Uri> uri = new MutableLiveData<>();
+    public MutableLiveData<Context> context = new MutableLiveData<>();
+    public MutableLiveData<String> weather = new MutableLiveData<>();
+    public MutableLiveData<String> temp = new MutableLiveData<>();
     public String diveNumber;
     public String place;
     public String point;
@@ -39,8 +44,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
     public String depthAve;
     public String airStart;
     public String airEnd;
-    public String weather;
-    public String temp;
     public String tempWater;
     public String visibility;
     public String memberNavigate;
@@ -49,7 +52,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
     public String strDate;
     public String strTimeDive;
     public String strAirDive;
-    public Uri uri;
     public int year;
     public int month;
     public int day;
@@ -72,6 +74,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      */
     public MainViewModel(@NonNull Context context, @Nullable DivingLog divingLog) {
         weakReference = new WeakReference<>(context);
+        this.context.setValue(context);
         if (null != divingLog) {
             this.divingLog = divingLog;
             setDataToLayout(divingLog);
@@ -85,7 +88,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      */
     @Override
     public void onMakeClick(View view) {
-        Log.d("VM", "onMakeClick");
         // -----【DB】保存処理--------------
         RegisterAsyncTask registerAsyncTask = new RegisterAsyncTask(weakReference.get());
         registerAsyncTask.setOnCallBack(new RegisterAsyncTask.RegisterCallback() {
@@ -180,11 +182,72 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
     }
 
     /**
+     * 伊豆の天気を取得する
+     *
+     * @param view クリックされたボタン
+     */
+    public void onIzuWeatherClick(View view) {
+        updateWeatherInfo("Izu");
+    }
+
+    /**
+     * 沖縄の天気を取得する
+     *
+     * @param view クリックされたボタン
+     */
+    public void onOkinawaWeatherClick(View view) {
+        updateWeatherInfo("Okinawa");
+    }
+
+    /**
+     * 天気情報サイトから引数で指定された場所の天気を取得する
+     *
+     * @param place 天気を取得したい場所
+     */
+    private void updateWeatherInfo(@NonNull String place) {
+        WeatherInfoReceiver weatherInfoReceiver = new WeatherInfoReceiver();
+        weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiver.WeatherInfoCallback() {
+            @Override
+            public void onSuccess(String weather, String temp) {
+                setWeatherInfo(weather, temp);
+            }
+
+            @Override
+            public void onFailure() {
+                setWeatherInfo(null, null);
+            }
+        });
+        weatherInfoReceiver.execute(place);
+    }
+
+    /**
+     * Viewに天気の情報を反映する
+     *
+     * @param weather 天気
+     * @param temp    温度
+     */
+    private void setWeatherInfo(@Nullable String weather, @Nullable String temp) {
+        String nullStr = "取得不能";
+        if (null == weather) {
+            this.weather.setValue(nullStr);
+        } else {
+            this.weather.setValue(weather);
+        }
+
+        if (null == temp) {
+            this.temp.setValue(nullStr);
+        } else {
+            this.temp.setValue(temp);
+        }
+    }
+
+    /**
      * DivingLogクラスにあるデータをレイアウトに格納する
      *
      * @param divingLog データを持っているDivingLogクラス
      */
     private void setDataToLayout(DivingLog divingLog) {
+        Log.d("ViewModel", "in setDataToLayout");
         diveNumber = String.valueOf(divingLog.getDivingNumber());
         place = divingLog.getPlace();
         point = divingLog.getPoint();
@@ -192,9 +255,9 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         depthAve = ConversionUtil.getStrFromInt(divingLog.getDepthAve());
         airStart = ConversionUtil.getStrFromInt(divingLog.getAirStart());
         airEnd = ConversionUtil.getStrFromInt(divingLog.getAirEnd());
-        weather = divingLog.getWeather();
-        temp = ConversionUtil.getStrFromInt(divingLog.getTemp());
-        tempWater = ConversionUtil.getStrFromInt(divingLog.getTempWater());
+        weather.setValue(divingLog.getWeather());
+        temp.setValue(ConversionUtil.getStrFromDouble(divingLog.getTemp()));
+        tempWater = ConversionUtil.getStrFromDouble(divingLog.getTempWater());
         visibility = ConversionUtil.getStrFromInt(divingLog.getVisibility());
         member = divingLog.getMember();
         memberNavigate = divingLog.getMemberNavigate();
@@ -226,21 +289,16 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
             defaultEndTimeOpt.ifPresent(cal::setTime);  //TODO ifPresentOrElse
             hourEnd = cal.get(Calendar.HOUR_OF_DAY);
             minuteEnd = cal.get(Calendar.MINUTE);
+
+            String pictureUri = divingLog.getPictureUri();
+            uri.setValue(Uri.parse(pictureUri));
+            context.setValue(weakReference.get());
         } catch (ParseException e) {
             Log.e(TAG, "Time's Error : " + e);
         }
 
-// TODO 模索中
-//        try {
-//            String pictureUri = divingLog.getPictureUri();
-//            if (null != pictureUri) {
-//                uri = Uri.parse(pictureUri);
-//                Bitmap bitmap = ConversionUtil.getBitmapFromUri(uri, requireContext());
-//                picture.setImageBitmap(bitmap);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        String pictureUri = divingLog.getPictureUri();
+        uri.setValue(Uri.parse(pictureUri));
     }
 
     /**
@@ -257,27 +315,27 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         divingLog.setAirStart(ConversionUtil.getIntFromStr(airStart));
         divingLog.setAirEnd(ConversionUtil.getIntFromStr(airEnd));
         divingLog.setAirDive(getDiveAir());
-        divingLog.setWeather(weather);
-        divingLog.setTemp(ConversionUtil.getIntFromStr(temp));
-        divingLog.setTempWater(ConversionUtil.getIntFromStr(tempWater));
+        divingLog.setWeather(weather.getValue());
+        divingLog.setTemp(ConversionUtil.getDoubleFromStr(temp.getValue()));
+        divingLog.setTempWater(ConversionUtil.getDoubleFromStr(tempWater));
         divingLog.setVisibility(ConversionUtil.getIntFromStr(visibility));
         divingLog.setMember(member);
         divingLog.setMemberNavigate(memberNavigate);
         divingLog.setMemo(memo);
 
-        Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat(LogConstant.FORMAT_DATE, Locale.JAPAN);
         SimpleDateFormat timeFormat = new SimpleDateFormat(LogConstant.FORMAT_TIME, Locale.JAPAN);
 
-        divingLog.setDate(getStrDate(calendar, dateFormat));
-        divingLog.setTimeStart(getStrTimeStart(calendar, timeFormat));
-        divingLog.setTimeEnd(getStrTimeEnd(calendar, timeFormat));
-        divingLog.setTimeDive(getStrTimeDive(calendar, timeFormat));
+        divingLog.setDate(ConversionUtil.getStrDate(dateFormat, year, month, day));
+        divingLog.setTimeStart(ConversionUtil.getStrTime(timeFormat, hourStart, minuteStart));
+        divingLog.setTimeEnd(ConversionUtil.getStrTime(timeFormat, hourEnd, minuteEnd));
 
-        Uri uri = ImageViewBindingAdapter.uri;
-        if (null != uri) {
-            divingLog.setPictureUri(uri.toString());
-        }
+        int[] time = getDiveTime();
+        int hour = time[0];
+        int minute = time[1];
+        divingLog.setTimeDive(ConversionUtil.getStrTime(timeFormat, hour, minute));
+
+        divingLog.setPictureUri(uri.getValue().toString());
     }
 
     /**
@@ -297,52 +355,11 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
     }
 
     /**
-     * 日付をString型のフォーマットに変換して返す
+     * ダイビング総時間を配列で返す
      *
-     * @param calendar   カレンダークラス
-     * @param dateFormat 日付用のフォーマット
-     * @return フォーマットを適用した日付
+     * @return ダイビング総時間([0] = 時間 、 [1] = 分 ）
      */
-    private String getStrDate(@NonNull Calendar calendar, @NonNull SimpleDateFormat dateFormat) {
-        Log.d("MV", "y=" + year + " ,m=" + month + " , d=" + day);
-        calendar.set(year, month, day); // 日付をカレンダークラスにセット
-        return dateFormat.format(calendar.getTime());   // フォーマットを指定してDivingLogクラスにセット
-    }
-
-    /**
-     * 開始時間をString型のフォーマットに変換して返す
-     *
-     * @param calendar   カレンダークラス
-     * @param timeFormat 時間用のフォーマット
-     * @return フォーマットを適用した開始時間
-     */
-    private String getStrTimeStart(@NonNull Calendar calendar, @NonNull SimpleDateFormat timeFormat) {
-        calendar.set(Calendar.HOUR_OF_DAY, hourStart);
-        calendar.set(Calendar.MINUTE, minuteStart);
-        return timeFormat.format(calendar.getTime());
-    }
-
-    /**
-     * 終了時間をString型のフォーマットに変換して返す
-     *
-     * @param calendar   カレンダークラス
-     * @param timeFormat 時間用のフォーマット
-     * @return フォーマットを適用した終了時間
-     */
-    private String getStrTimeEnd(@NonNull Calendar calendar, @NonNull SimpleDateFormat timeFormat) {
-        calendar.set(Calendar.HOUR_OF_DAY, hourEnd);
-        calendar.set(Calendar.MINUTE, minuteEnd);
-        return timeFormat.format(calendar.getTime());
-    }
-
-    /**
-     * ダイビング総時間をString型のフォーマットに変換して返す
-     *
-     * @param calendar   カレンダークラス
-     * @param timeFormat 時間用のフォーマット
-     * @return フォーマットを適用した総時間
-     */
-    private String getStrTimeDive(@NonNull Calendar calendar, @NonNull SimpleDateFormat timeFormat) {
+    private int[] getDiveTime() {
         int hour = hourEnd - hourStart;
         int minute;
         if (minuteEnd < minuteStart) {
@@ -351,9 +368,10 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         } else {
             minute = minuteEnd - minuteStart;
         }
-        calendar.set(Calendar.HOUR, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        Log.d(TAG, "time = " + timeFormat.format(calendar.getTimeInMillis()));
-        return timeFormat.format(calendar.getTimeInMillis());
+
+        int[] time = new int[2];
+        time[0] = hour;
+        time[1] = minute;
+        return time;
     }
 }

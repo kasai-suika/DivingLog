@@ -13,19 +13,16 @@ import com.ojtapp.divinglog.util.ConversionUtil;
 import java.io.IOException;
 
 public class ImageViewBindingAdapter extends BaseObservable {
-    public static Uri uri;
 
     @BindingAdapter(value = {"app:imageUri", "app:imageContext"})
     public static void setImageView(ImageView imageView, Uri uri, Context context) {
         if (null != uri) {
-            ImageViewBindingAdapter.uri = uri;
             try {
                 Bitmap bmp = ConversionUtil.getBitmapFromUri(uri, context);
                 imageView.setImageBitmap(bmp);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            ImageViewBindingAdapter.uri = null;
         }
     }
 }

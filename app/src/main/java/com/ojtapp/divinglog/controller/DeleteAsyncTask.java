@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
-import com.ojtapp.divinglog.LogConstant;
+import com.ojtapp.divinglog.constant.LogConstant;
 import com.ojtapp.divinglog.appif.DivingLog;
 import com.ojtapp.divinglog.model.OpenHelper;
 import com.ojtapp.divinglog.view.dialog.ProgressDialogFragment;

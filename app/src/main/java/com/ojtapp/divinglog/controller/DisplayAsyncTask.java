@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.ojtapp.divinglog.LogConstant;
+import com.ojtapp.divinglog.constant.LogConstant;
 import com.ojtapp.divinglog.appif.DivingLog;
 import com.ojtapp.divinglog.model.OpenHelper;
 
@@ -179,11 +179,11 @@ public class DisplayAsyncTask extends AsyncTask<Integer, Integer, List<DivingLog
                 cursor.getColumnIndexOrThrow(LogConstant.WEATHER));
         log.setWeather(weather);
         // 気温
-        int temp = cursor.getInt(
+        double temp = cursor.getDouble(
                 cursor.getColumnIndexOrThrow(LogConstant.TEMP));
         log.setTemp(temp);
         // 水温
-        int waterTemp = cursor.getInt(
+        double waterTemp = cursor.getDouble(
                 cursor.getColumnIndexOrThrow(LogConstant.TEMP_WATER));
         log.setTempWater(waterTemp);
         // 透明度

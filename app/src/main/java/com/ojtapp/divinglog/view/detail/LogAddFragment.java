@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +25,10 @@ public class LogAddFragment extends Fragment {
      * クラスの名前
      */
     private static final String TAG = LogAddFragment.class.getSimpleName();
-
     /**
-     * バインディングクラス
+     * ViewModel
      */
-    private FragmentAddLogBinding binding;
+    private MainViewModel viewModel;
 
     /**
      * デフォルトコンストラクタ
@@ -55,8 +55,9 @@ public class LogAddFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceStat) {
         android.util.Log.d(TAG, "onCreateView");
-        MainViewModel viewModel = new MainViewModel(requireContext(), null);
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_log, container, false);
+        viewModel = new MainViewModel(requireContext(), null);
+        FragmentAddLogBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_log, container, false);
+        binding.setLifecycleOwner(this);
         binding.setMain(viewModel);
 
         return binding.getRoot();
@@ -81,12 +82,11 @@ public class LogAddFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        Log.d("AddFrag", "in onActivityResult");
         if (requestCode == MainActivity.RESULT_PICK_IMAGEFILE && resultCode == Activity.RESULT_OK) {
             if (null != resultData) {
                 Uri uri = resultData.getData();
-                binding.setUri(uri);
-                binding.setContext(requireContext());
-
+                viewModel.uri.setValue(uri);
                 // URIの権限を保持する
                 final int takeFlags = resultData.getFlags()
                         & (Intent.FLAG_GRANT_READ_URI_PERMISSION

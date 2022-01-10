@@ -7,14 +7,6 @@
         <variable
             name="main"
             type="com.ojtapp.divinglog.viewModel.MainViewModel" />
-
-        <variable
-            name="uri"
-            type="android.net.Uri" />
-
-        <variable
-            name="context"
-            type="android.content.Context" />
     </data>
 
     <LinearLayout
@@ -295,30 +287,48 @@
                         android:text="@string/weather"
                         android:textSize="17sp" />
 
-                    <EditText
-                        android:id="@+id/add_weather"
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
-                        android:autofillHints="@string/hint"
-                        android:inputType="text"
-                        android:text="@={main.weather}"
-                        tools:ignore="LabelFor" />
 
-                    <TextView
+                    <Button
+                        android:id="@+id/button_weather_izu"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
-                        android:text="@string/temp"
-                        android:textSize="17sp" />
+                        android:layout_marginStart="30dp"
+                        android:onClick="@{main.onIzuWeatherClick}"
+                        android:text="@string/weather_place_izu" />
+
+                    <Button
+                        android:id="@+id/button_weather_okinawa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:onClick="@{main.onOkinawaWeatherClick}"
+                        android:text="@string/weather_place_okinawa" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <EditText
-                        android:id="@+id/add_temp"
-                        android:layout_width="118dp"
+                        android:id="@+id/tenki"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
-                        android:autofillHints="@string/hint"
-                        android:inputType="number"
-                        android:text="@={main.temp}"
-                        tools:ignore="LabelFor" />
+                        android:layout_marginStart="80dp"
+                        android:autofillHints="@string/weather"
+                        android:hint="@string/weather"
+                        android:inputType="text"
+                        android:text="@={main.weather}" />
+
+                    <EditText
+                        android:id="@+id/kion"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:autofillHints="@string/temp"
+                        android:hint="@string/temp"
+                        android:inputType="text"
+                        android:text="@={main.temp}" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -454,8 +464,8 @@
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/content_description_display_picture"
                     android:scaleType="fitStart"
-                    app:imageUri="@{uri}"
-                    app:imageContext = "@{context}"/>
+                    app:imageContext="@{main.context}"
+                    app:imageUri="@{main.uri}" />
 
                 <TextView
                     android:layout_width="match_parent"

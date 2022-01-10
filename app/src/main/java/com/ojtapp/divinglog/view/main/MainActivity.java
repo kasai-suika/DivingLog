@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements LogFragment.OnLis
     }
 
     /**
-     * リスト内の「更新ボタンが押下された場合、
+     * リスト内の「更新ボタン」が押下された場合、
      * 編集画面に移行する
      * @param view　押下されたリスト
      */
