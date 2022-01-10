@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,55 +16,49 @@ import com.ojtapp.divinglog.model.OpenHelper;
 import java.lang.ref.WeakReference;
 
 /**
- * Log情報をDBに保存するクラス
+ * 【DB】データ更新処理クラス
  */
-public class RegisterAsyncTask extends AsyncTask<DivingLog, Integer, Boolean> {
+public class UpdateAsyncTask extends AsyncTask<DivingLog, Integer, Boolean> {
     /**
      * クラス名
      */
-    private static final String TAG = RegisterAsyncTask.class.getSimpleName();
+    private static final String TAG = UpdateAsyncTask.class.getSimpleName();
     /**
-     * コンテクスト受け取り用
+     * Context受け取り用
      */
+    @NonNull
     private final WeakReference<Context> weakReference;
     /**
-     * コールバック受け取り用
+     * コールバック設定用
      */
-    private RegisterCallback registerCallback;
+    @Nullable
+    private UpdateCallback updateCallback;
 
-    /**
-     * コンストラクタ
-     * {@inheritDoc}
-     */
-    public RegisterAsyncTask(@NonNull Context context) {
+    public UpdateAsyncTask(@NonNull Context context) {
         super();
         weakReference = new WeakReference<>(context);
     }
 
     /**
-     * DB保存処理
-     * <p>
-     * {@inheritDoc}
+     * DB更新処理
      *
-     * @return 保存成功：true　失敗：false
+     * @param divingLogs 　ダイビングログ
+     * @return 更新処理が成功：true
      */
     @Override
     protected Boolean doInBackground(DivingLog... divingLogs) {
-        android.util.Log.d(TAG, "doInBackground");
+        Log.d(TAG, "doInBackground");
 
         // 失敗
-        if (divingLogs[0] == null) {
+        if (null == divingLogs[0]) {
             return false;
         }
 
-        //　非同期での処理
-        // DB作成
+        // データベースを開く
         OpenHelper openHelper = new OpenHelper(weakReference.get());
-
-        // DBを開く
         SQLiteDatabase db = openHelper.getWritableDatabase();
 
-        // カラム名と保存するデータをセット
+        // カラム名と保存するデータを設定
         ContentValues values = new ContentValues();
         values.put(LogConstant.DIVE_NUMBER, divingLogs[0].getDivingNumber());
         values.put(LogConstant.PLACE, divingLogs[0].getPlace());
@@ -86,14 +81,21 @@ public class RegisterAsyncTask extends AsyncTask<DivingLog, Integer, Boolean> {
         values.put(LogConstant.MEMO, divingLogs[0].getMemo());
         values.put(LogConstant.PICTURE, divingLogs[0].getPictureUri());
 
-        // 保存実行
-        db.insert(LogConstant.TABLE_NAME, null, values);
+        // 更新処理
+        String selection = LogConstant.LOG_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(divingLogs[0].getLogId())};
+
+        db.update(
+                LogConstant.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+
         return true;
     }
 
     @Override
     protected void onProgressUpdate(Integer... progress) {
-        // 進捗状況の表示などの処理
     }
 
     /**
@@ -103,11 +105,11 @@ public class RegisterAsyncTask extends AsyncTask<DivingLog, Integer, Boolean> {
     @Override
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
-        if (null != registerCallback) {
+        if (null != updateCallback) {
             if (result) {
-                registerCallback.onSuccess();
+                updateCallback.onSuccess();
             } else {
-                registerCallback.onFailure();
+                updateCallback.onFailure();
             }
         }
     }
@@ -115,16 +117,16 @@ public class RegisterAsyncTask extends AsyncTask<DivingLog, Integer, Boolean> {
     /**
      * コールバック処理を設定
      *
-     * @param registerCallback 　コールバックする内容
+     * @param updateCallback コールバックする内容
      */
-    public void setOnCallBack(@Nullable RegisterCallback registerCallback) {
-        this.registerCallback = registerCallback;
+    public void setUpdateCallback(@Nullable UpdateCallback updateCallback) {
+        this.updateCallback = updateCallback;
     }
 
     /**
      * コールバック用インターフェイス
      */
-    public interface RegisterCallback {
+    public interface UpdateCallback {
         void onSuccess();
 
         void onFailure();

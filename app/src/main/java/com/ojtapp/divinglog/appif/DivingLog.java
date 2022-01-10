@@ -1,12 +1,11 @@
 package com.ojtapp.divinglog.appif;
 
+import androidx.annotation.Nullable;
+
 import java.io.Serializable;
 
 public class DivingLog implements Serializable {
-    private static final long serialVersionID = 1;
-
     private int logId;
-    private DivingLog log;
     private int diveNumber;
     private String place;
     private String point;
@@ -16,8 +15,8 @@ public class DivingLog implements Serializable {
     private int airEnd;
     private int airDive;
     private String weather;
-    private int temp;
-    private int tempWater;
+    private double temp;
+    private double tempWater;
     private int visibility;
     private String memberNavigate;
     private String member;
@@ -26,22 +25,19 @@ public class DivingLog implements Serializable {
     private String timeStart;
     private String timeEnd;
     private String timeDive;
+    private String pictureUri;
 
     /**
      * コンストラクタ
      */
-    public DivingLog(){
+    public DivingLog() {
     }
 
-    public void setDivingLog(DivingLog log){
-        this.log = log;
-    }
-
-    public int getLogId(){
+    public int getLogId() {
         return logId;
     }
 
-    public void setLogId(int logId){
+    public void setLogId(int logId) {
         this.logId = logId;
     }
 
@@ -49,7 +45,7 @@ public class DivingLog implements Serializable {
         return diveNumber;
     }
 
-    public void setDiveNumber(int diveNumber){
+    public void setDiveNumber(int diveNumber) {
         this.diveNumber = diveNumber;
     }
 
@@ -57,7 +53,7 @@ public class DivingLog implements Serializable {
         return place;
     }
 
-    public void setPlace(String place) {
+    public void setPlace(@Nullable String place) {
         this.place = place;
     }
 
@@ -65,7 +61,7 @@ public class DivingLog implements Serializable {
         return point;
     }
 
-    public void setPoint(String point) {
+    public void setPoint(@Nullable String point) {
         this.point = point;
     }
 
@@ -113,23 +109,23 @@ public class DivingLog implements Serializable {
         return weather;
     }
 
-    public void setWeather(String we) {
+    public void setWeather(@Nullable String weather) {
         this.weather = weather;
     }
 
-    public int getTemp() {
+    public double getTemp() {
         return temp;
     }
 
-    public void setTemp(int temp) {
+    public void setTemp(double temp) {
         this.temp = temp;
     }
 
-    public int getTempWater() {
+    public double getTempWater() {
         return tempWater;
     }
 
-    public void setTempWater(int tempWater) {
+    public void setTempWater(double tempWater) {
         this.tempWater = tempWater;
     }
 
@@ -145,7 +141,7 @@ public class DivingLog implements Serializable {
         return memberNavigate;
     }
 
-    public void setMemberNavigate(String memberNavigate) {
+    public void setMemberNavigate(@Nullable String memberNavigate) {
         this.memberNavigate = memberNavigate;
     }
 
@@ -153,7 +149,7 @@ public class DivingLog implements Serializable {
         return member;
     }
 
-    public void setMember(String member) {
+    public void setMember(@Nullable String member) {
         this.member = member;
     }
 
@@ -161,7 +157,7 @@ public class DivingLog implements Serializable {
         return memo;
     }
 
-    public void setMemo(String memo) {
+    public void setMemo(@Nullable String memo) {
         this.memo = memo;
     }
 
@@ -169,7 +165,7 @@ public class DivingLog implements Serializable {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(@Nullable String date) {
         this.date = date;
     }
 
@@ -177,7 +173,7 @@ public class DivingLog implements Serializable {
         return timeStart;
     }
 
-    public void setTimeStart(String timeStart) {
+    public void setTimeStart(@Nullable String timeStart) {
         this.timeStart = timeStart;
     }
 
@@ -185,7 +181,7 @@ public class DivingLog implements Serializable {
         return timeEnd;
     }
 
-    public void setTimeEnd(String timeEnd) {
+    public void setTimeEnd(@Nullable String timeEnd) {
         this.timeEnd = timeEnd;
     }
 
@@ -193,7 +189,15 @@ public class DivingLog implements Serializable {
         return timeDive;
     }
 
-    public void setTimeDive(String timeDive) {
+    public void setTimeDive(@Nullable String timeDive) {
         this.timeDive = timeDive;
+    }
+
+    public String getPictureUri() {
+        return pictureUri;
+    }
+
+    public void setPictureUri(@Nullable String pictureUri) {
+        this.pictureUri = pictureUri;
     }
 }
