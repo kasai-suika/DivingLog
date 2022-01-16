@@ -1,13 +1,17 @@
 package com.ojtapp.divinglog.viewModel;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.MutableLiveData;
@@ -24,6 +28,7 @@ import com.ojtapp.divinglog.view.dialog.DialogFragment;
 import com.ojtapp.divinglog.view.main.MainActivity;
 
 import java.lang.ref.WeakReference;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -200,9 +205,30 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
     }
 
     /**
+     * 現在地の天気を取得する
+     *
+     * @param view クリックされたボタン
+     */
+    public void onGenzaichiWeatherClick(View view) {
+        final MainActivity activity = (MainActivity) weakReference.get();
+
+        // 位置情報取得権限の確認
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // 権限がない場合、許可ダイアログ表示
+            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+            ActivityCompat.requestPermissions(activity, permissions, 2000);
+        }
+
+        Location location = activity.getLocation();
+        if (null != location) {
+            updateWeatherInfo(location);
+        }
+    }
+
+    /**
      * 天気情報サイトから引数で指定された場所の天気を取得する
      *
-     * @param place 天気を取得したい場所
+     * @param place 天気を取得したい場所の地名
      */
     private void updateWeatherInfo(@NonNull String place) {
         WeatherInfoReceiver weatherInfoReceiver = new WeatherInfoReceiver();
@@ -218,6 +244,31 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
             }
         });
         weatherInfoReceiver.execute(place);
+    }
+
+    /**
+     * 天気情報サイトから引数で指定された位置情報の天気を取得する
+     *
+     * @param location 天気を取得したい場所の位置情報
+     */
+    private void updateWeatherInfo(@NonNull Location location) {
+        DecimalFormat df = new DecimalFormat("###.##");
+        String lat = df.format(location.getLatitude());     // 緯度を取得
+        String lon = df.format(location.getLongitude());    // 経度を取得
+
+        WeatherInfoReceiver weatherInfoReceiver = new WeatherInfoReceiver();
+        weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiver.WeatherInfoCallback() {
+            @Override
+            public void onSuccess(String weather, String temp) {
+                setWeatherInfo(weather, temp);
+            }
+
+            @Override
+            public void onFailure() {
+                setWeatherInfo(null, null);
+            }
+        });
+        weatherInfoReceiver.execute(lat, lon);
     }
 
     /**
