@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.ojtapp.divinglog.R;
 import com.ojtapp.divinglog.appif.DivingLog;
-import com.ojtapp.divinglog.listner.ReplaceViewListener;
+import com.ojtapp.divinglog.listner.OnReplaceViewButtonClickListener;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class LogAdapter extends ArrayAdapter<DivingLog> {
     /**
      * 画面移行するリスナー
      */
-    private ReplaceViewListener listener;
+    private OnReplaceViewButtonClickListener listener;
 
     /**
      * コンストラクタ
@@ -71,14 +71,14 @@ public class LogAdapter extends ArrayAdapter<DivingLog> {
             @Override
             public void onClick(View v) {
                 if ((null != listener) && (null != divingLog)) {
-                    listener.replaceToEditFragment(divingLog);
+                    listener.onReplaceToEditFragmentButtonClick(divingLog);
                 }
             }
         });
         return view;
     }
 
-    public void setReplaceViewListener(@Nullable ReplaceViewListener listener) {
+    public void setOnReplaceViewButtonClickListener(@Nullable OnReplaceViewButtonClickListener listener) {
         this.listener = listener;
     }
 }

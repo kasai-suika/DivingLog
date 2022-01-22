@@ -1,9 +1,7 @@
 package com.ojtapp.divinglog.viewModel;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
@@ -11,9 +9,9 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -34,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 public class MainViewModel extends ViewModel implements ClickHandlers {
@@ -43,6 +42,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
     public MutableLiveData<Context> context = new MutableLiveData<>();
     public MutableLiveData<String> weather = new MutableLiveData<>();
     public MutableLiveData<String> temp = new MutableLiveData<>();
+    private MutableLiveData<String> genzaichiWeatherClickAction = new MutableLiveData<>();
     public String diveNumber;
     public String place;
     public String point;
@@ -71,6 +71,9 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      * Context受け取り用
      */
     private static WeakReference<Context> weakReference = null;
+
+    public MainViewModel() {
+    }
 
     /**
      * コンストラクタ
@@ -205,18 +208,15 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      * @param view クリックされたボタン
      */
     public void onGenzaichiWeatherClick(View view) {
-        final MainActivity activity = (MainActivity) weakReference.get();
-
-        // 位置情報取得権限の確認
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // 権限がない場合、許可ダイアログ表示
-            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
-            ActivityCompat.requestPermissions(activity, permissions, 2000);
-        }
-
+        checkLocationPermission();
         if (null != location) {
             updateWeatherInfo(location);
         }
+    }
+
+    public LiveData<String> checkLocationPermission() {
+        genzaichiWeatherClickAction.setValue(Objects.equals(genzaichiWeatherClickAction.getValue(), "a") ? "a" : "b");
+        return genzaichiWeatherClickAction;
     }
 
     public static void setLocation(Location GPSLocation) {

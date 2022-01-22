@@ -4,20 +4,20 @@ import androidx.annotation.NonNull;
 
 import com.ojtapp.divinglog.appif.DivingLog;
 
-public interface ReplaceViewListener {
+public interface OnReplaceViewButtonClickListener {
     /**
      * 編集画面に移行する
      *
      * @param divingLog 　更新対象のデータをもつDivingLogクラス
      */
-    void replaceToEditFragment(@NonNull DivingLog divingLog);
+    void onReplaceToEditFragmentButtonClick(@NonNull DivingLog divingLog);
 
     /**
      * 詳細画面に移行する
      *
      * @param divingLog 　詳細表示対象のデータをもつDivingLogクラス
      */
-    void replaceToDetailFragment(@NonNull DivingLog divingLog);
+    void onReplaceToDetailFragmentButtonClick(@NonNull DivingLog divingLog);
 
 //    void replaceToMainActivity(@NonNull DivingLog divingLog);
 

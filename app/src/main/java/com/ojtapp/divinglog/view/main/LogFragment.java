@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.ojtapp.divinglog.R;
 import com.ojtapp.divinglog.appif.DivingLog;
 import com.ojtapp.divinglog.controller.DisplayAsyncTask;
-import com.ojtapp.divinglog.listner.ReplaceViewListener;
+import com.ojtapp.divinglog.listner.OnReplaceViewButtonClickListener;
 import com.ojtapp.divinglog.util.SharedPreferencesUtil;
 import com.ojtapp.divinglog.view.dialog.SortMenu;
 
@@ -31,7 +31,7 @@ public class LogFragment extends Fragment {
     /**
      * 画面移行するリスナー
      */
-    private ReplaceViewListener listener;
+    private OnReplaceViewButtonClickListener listener;
 
     public LogFragment() {
     }
@@ -67,7 +67,7 @@ public class LogFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemClick");
                 DivingLog divingLog = (DivingLog) parent.getItemAtPosition(position);
-                listener.replaceToDetailFragment(divingLog);
+                listener.onReplaceToDetailFragmentButtonClick(divingLog);
             }
         });
         // データを取得し、画面を更新処理
@@ -88,7 +88,7 @@ public class LogFragment extends Fragment {
 
                 // Adapterの設定
                 LogAdapter logAdapter = new LogAdapter(requireContext(), R.layout.list_log_item, logList);
-                logAdapter.setReplaceViewListener(listener);
+                logAdapter.setOnReplaceViewButtonClickListener(listener);
                 listView.setAdapter(logAdapter);
             }
 
@@ -102,7 +102,7 @@ public class LogFragment extends Fragment {
         displayAsyncTask.execute(0);
     }
 
-    public void setReplaceViewListener(@Nullable ReplaceViewListener listener) {
+    public void setOnReplaceViewButtonClickListener(@Nullable OnReplaceViewButtonClickListener listener) {
         Log.d("log", "list =" +listener);
         this.listener = listener;
     }

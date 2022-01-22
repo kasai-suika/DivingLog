@@ -75,7 +75,7 @@ public class LogAddFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.setType("image/*");
-                startActivityForResult(intent, MainActivity.RESULT_PICK_IMAGEFILE);
+                startActivityForResult(intent, MainActivity.REQUEST_CODE_OPEN_DOCUMENT);
             }
         });
     }
@@ -83,7 +83,7 @@ public class LogAddFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         Log.d("AddFrag", "in onActivityResult");
-        if (requestCode == MainActivity.RESULT_PICK_IMAGEFILE && resultCode == Activity.RESULT_OK) {
+        if ((requestCode == MainActivity.REQUEST_CODE_OPEN_DOCUMENT) && (resultCode == Activity.RESULT_OK)) {
             if (null != resultData) {
                 Uri uri = resultData.getData();
                 viewModel.uri.setValue(uri);

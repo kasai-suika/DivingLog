@@ -82,14 +82,14 @@ public class LogEditFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.setType("image/*");
-                startActivityForResult(intent, MainActivity.RESULT_PICK_IMAGEFILE);
+                startActivityForResult(intent, MainActivity.REQUEST_CODE_OPEN_DOCUMENT);
             }
         });
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        if (requestCode == MainActivity.RESULT_PICK_IMAGEFILE && resultCode == Activity.RESULT_OK) {
+        if ((requestCode == MainActivity.REQUEST_CODE_OPEN_DOCUMENT) && (resultCode == Activity.RESULT_OK)) {
             Context context = getContext();
             if ((resultData != null) && (context != null)) {
                 Uri uri = resultData.getData();

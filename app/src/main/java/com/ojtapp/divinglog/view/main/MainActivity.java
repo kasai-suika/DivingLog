@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -24,7 +25,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ojtapp.divinglog.R;
 import com.ojtapp.divinglog.appif.DivingLog;
-import com.ojtapp.divinglog.listner.ReplaceViewListener;
+import com.ojtapp.divinglog.listner.OnReplaceViewButtonClickListener;
 import com.ojtapp.divinglog.util.SharedPreferencesUtil;
 import com.ojtapp.divinglog.view.detail.LogAddFragment;
 import com.ojtapp.divinglog.view.detail.LogDetailFragment;
@@ -32,7 +33,7 @@ import com.ojtapp.divinglog.view.detail.LogEditFragment;
 import com.ojtapp.divinglog.view.dialog.SortDialogFragment;
 import com.ojtapp.divinglog.viewModel.MainViewModel;
 
-public class MainActivity extends AppCompatActivity implements ReplaceViewListener {
+public class MainActivity extends AppCompatActivity implements OnReplaceViewButtonClickListener {
     /**
      * クラス名
      */
@@ -40,7 +41,9 @@ public class MainActivity extends AppCompatActivity implements ReplaceViewListen
     private LogFragment targetFragment;
     private FusedLocationProviderClient fusedLocationClient;
     public static SharedPreferences sharedPreferences;
-    public static final int RESULT_PICK_IMAGEFILE = 1000;
+    public static final int REQUEST_CODE_OPEN_DOCUMENT = 1000;
+    private static final int REQUEST_CODE_FINE_LOCATION = 2000;
+    private static final String[] PERMISSIONS_FINE_LOCATION = {Manifest.permission.ACCESS_FINE_LOCATION};
 
 
     @Override
@@ -62,6 +65,14 @@ public class MainActivity extends AppCompatActivity implements ReplaceViewListen
                 Log.d(TAG, "追加ボタン押下");
                 LogAddFragment fragment = (LogAddFragment) LogAddFragment.newInstance();
                 getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
+            }
+        });
+
+        MainViewModel viewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(MainViewModel.class);
+        viewModel.checkLocationPermission().observe(this, observe -> {
+            // 権限がない場合、許可ダイアログ表示
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS_FINE_LOCATION, REQUEST_CODE_FINE_LOCATION);
             }
         });
 
@@ -88,7 +99,9 @@ public class MainActivity extends AppCompatActivity implements ReplaceViewListen
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 2000 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if ((requestCode == REQUEST_CODE_FINE_LOCATION)
+                && (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                && (permissions == PERMISSIONS_FINE_LOCATION)) {
             // 位置情報取得開始
             startUpdateLocation(this);
         }
@@ -146,10 +159,10 @@ public class MainActivity extends AppCompatActivity implements ReplaceViewListen
     public void onAttachFragment(@NonNull Fragment fragment) {
         if (fragment instanceof LogFragment) {
             LogFragment logFragment = (LogFragment) fragment;
-            logFragment.setReplaceViewListener(this);
+            logFragment.setOnReplaceViewButtonClickListener(this);
         } else if (fragment instanceof LogDetailFragment) {
             LogDetailFragment logDetailFragment = (LogDetailFragment) fragment;
-            logDetailFragment.setOnDetailFragmentEditButtonListener(this);
+            logDetailFragment.setOnReplaceViewButtonClickListener(this);
         }
     }
 
@@ -157,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements ReplaceViewListen
      * {@inheritDoc}
      */
     @Override
-    public void replaceToEditFragment(@NonNull DivingLog divingLog) {
+    public void onReplaceToEditFragmentButtonClick(@NonNull DivingLog divingLog) {
         LogEditFragment fragment = (LogEditFragment) LogEditFragment.newInstance(divingLog);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
     }
@@ -166,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements ReplaceViewListen
      * {@inheritDoc}
      */
     @Override
-    public void replaceToDetailFragment(@NonNull DivingLog divingLog) {
+    public void onReplaceToDetailFragmentButtonClick(@NonNull DivingLog divingLog) {
         LogDetailFragment fragment = (LogDetailFragment) LogDetailFragment.newInstance(divingLog);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
     }
