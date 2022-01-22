@@ -16,6 +16,7 @@ import com.ojtapp.divinglog.R;
 import com.ojtapp.divinglog.appif.DivingLog;
 import com.ojtapp.divinglog.databinding.FragmentDetailLogBinding;
 import com.ojtapp.divinglog.viewModel.MainViewModel;
+import com.ojtapp.divinglog.listner.ReplaceViewListener;
 
 public class LogDetailFragment extends Fragment {
     /**
@@ -27,9 +28,9 @@ public class LogDetailFragment extends Fragment {
      */
     private static final String LOG_KEY = "DIVE_LOG";
     /**
-     * 編集ボタン押下のコールバック
+     * 画面移行するリスナー
      */
-    private OnDetailFragmentEditButtonListener callback;
+    private ReplaceViewListener listener;
     private DivingLog divingLog;
 
     /**
@@ -77,16 +78,14 @@ public class LogDetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "編集ボタン押下");
-                callback.onDetailFragmentEditButton(divingLog);
+                if (null != listener){
+                    listener.replaceToEditFragment(divingLog);
+                }
             }
         });
     }
 
-    public void setOnDetailFragmentEditButtonListener(@Nullable OnDetailFragmentEditButtonListener callback) {
-        this.callback = callback;
-    }
-
-    public interface OnDetailFragmentEditButtonListener {
-        void onDetailFragmentEditButton(DivingLog divingLog);
+    public void setOnDetailFragmentEditButtonListener(@Nullable ReplaceViewListener listener) {
+        this.listener = listener;
     }
 }

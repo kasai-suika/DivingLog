@@ -24,6 +24,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ojtapp.divinglog.R;
 import com.ojtapp.divinglog.appif.DivingLog;
+import com.ojtapp.divinglog.listner.ReplaceViewListener;
 import com.ojtapp.divinglog.util.SharedPreferencesUtil;
 import com.ojtapp.divinglog.view.detail.LogAddFragment;
 import com.ojtapp.divinglog.view.detail.LogDetailFragment;
@@ -31,7 +32,7 @@ import com.ojtapp.divinglog.view.detail.LogEditFragment;
 import com.ojtapp.divinglog.view.dialog.SortDialogFragment;
 import com.ojtapp.divinglog.viewModel.MainViewModel;
 
-public class MainActivity extends AppCompatActivity implements LogFragment.OnListItemListener, LogDetailFragment.OnDetailFragmentEditButtonListener {
+public class MainActivity extends AppCompatActivity implements ReplaceViewListener {
     /**
      * クラス名
      */
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements LogFragment.OnLis
     public void onAttachFragment(@NonNull Fragment fragment) {
         if (fragment instanceof LogFragment) {
             LogFragment logFragment = (LogFragment) fragment;
-            logFragment.setOnListItemListener(this);
+            logFragment.setReplaceViewListener(this);
         } else if (fragment instanceof LogDetailFragment) {
             LogDetailFragment logDetailFragment = (LogDetailFragment) fragment;
             logDetailFragment.setOnDetailFragmentEditButtonListener(this);
@@ -153,38 +154,29 @@ public class MainActivity extends AppCompatActivity implements LogFragment.OnLis
     }
 
     /**
-     * リストアイテムが押下された場合、
-     * 詳細画面に移行する
-     *
-     * @param divingLog 　押下されたリストアイテムが保持するデータをもつDivingLogクラス
+     * {@inheritDoc}
      */
     @Override
-    public void onListItem(@NonNull DivingLog divingLog) {
+    public void replaceToEditFragment(@NonNull DivingLog divingLog) {
+        LogEditFragment fragment = (LogEditFragment) LogEditFragment.newInstance(divingLog);
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void replaceToDetailFragment(@NonNull DivingLog divingLog) {
         LogDetailFragment fragment = (LogDetailFragment) LogDetailFragment.newInstance(divingLog);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
     }
-
-    /**
-     * 詳細画面で「更新ボタン」が押下された場合、
-     * 編集画面に移行する
-     *
-     * @param divingLog 　更新対象のデータをもつDivingLogクラス
-     */
-    @Override
-    public void onDetailFragmentEditButton(@NonNull DivingLog divingLog) {
-        LogEditFragment fragment = (LogEditFragment) LogEditFragment.newInstance(divingLog);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
-    }
-
-    /**
-     * リスト内の「更新ボタン」が押下された場合、
-     * 編集画面に移行する
-     *
-     * @param view 　押下されたリスト
-     */
-    public void onListEditButton(@NonNull View view) {
-        DivingLog divingLog = (DivingLog) view.getTag();
-        LogEditFragment fragment = (LogEditFragment) LogEditFragment.newInstance(divingLog);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
-    }
+//
+//    @Override
+//    public void replaceToActivity() {
+//        // 情報をintentに詰める
+//        Intent intent = new Intent(this, MainActivity.class);
+//        // 指定したアクティビティより上のViewを削除
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        this.startActivity(intent);
+//    }
 }

@@ -89,8 +89,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
 
     /**
      * {@inheritDoc}
-     *
-     * @param view ボタン
      */
     @Override
     public void onMakeClick(View view) {
@@ -117,8 +115,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
 
     /**
      * {@inheritDoc}
-     *
-     * @param view 　ボタン
      */
     @Override
     public void onDeleteClick(View view) {
@@ -159,8 +155,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
 
     /**
      * {@inheritDoc}
-     *
-     * @param view 　ボタン
      */
     @Override
     public void onEditClick(View view) {
@@ -430,4 +424,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         time[1] = minute;
         return time;
     }
+
+
 }

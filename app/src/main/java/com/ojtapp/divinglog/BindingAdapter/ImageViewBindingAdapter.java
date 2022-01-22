@@ -2,6 +2,7 @@ package com.ojtapp.divinglog.BindingAdapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.widget.ImageView;
 
@@ -13,7 +14,6 @@ import com.ojtapp.divinglog.util.ConversionUtil;
 import java.io.IOException;
 
 public class ImageViewBindingAdapter extends BaseObservable {
-
     @BindingAdapter(value = {"app:imageUri", "app:imageContext"})
     public static void setImageView(ImageView imageView, Uri uri, Context context) {
         if (null != uri) {
@@ -26,3 +26,4 @@ public class ImageViewBindingAdapter extends BaseObservable {
         }
     }
 }
+
