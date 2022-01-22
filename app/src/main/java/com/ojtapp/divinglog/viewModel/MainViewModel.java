@@ -344,16 +344,14 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
             defaultEndTimeOpt.ifPresent(cal::setTime);  //TODO ifPresentOrElse
             hourEnd = cal.get(Calendar.HOUR_OF_DAY);
             minuteEnd = cal.get(Calendar.MINUTE);
-
-            String pictureUri = divingLog.getPictureUri();
-            uri.setValue(Uri.parse(pictureUri));
-            context.setValue(weakReference.get());
         } catch (ParseException e) {
             Log.e(TAG, "Time's Error : " + e);
         }
 
         String pictureUri = divingLog.getPictureUri();
-        uri.setValue(Uri.parse(pictureUri));
+        if (null != pictureUri) {
+            uri.setValue(Uri.parse(pictureUri));
+        }
     }
 
     /**
@@ -390,7 +388,10 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         int minute = time[1];
         divingLog.setTimeDive(ConversionUtil.getStrTime(timeFormat, hour, minute));
 
-        divingLog.setPictureUri(uri.getValue().toString());
+        Uri uriValue = uri.getValue();
+        if (null != uriValue) {
+            divingLog.setPictureUri(uriValue.toString());
+        }
     }
 
     /**
