@@ -38,6 +38,7 @@ import java.util.Optional;
 
 public class MainViewModel extends ViewModel implements ClickHandlers {
     private static final String TAG = MainViewModel.class.getSimpleName();
+    private static Location location;
     public MutableLiveData<Uri> uri = new MutableLiveData<>();
     public MutableLiveData<Context> context = new MutableLiveData<>();
     public MutableLiveData<String> weather = new MutableLiveData<>();
@@ -219,10 +220,13 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
             ActivityCompat.requestPermissions(activity, permissions, 2000);
         }
 
-        Location location = activity.getLocation();
         if (null != location) {
             updateWeatherInfo(location);
         }
+    }
+
+    public static void setLocation(Location GPSLocation) {
+        location = GPSLocation;
     }
 
     /**

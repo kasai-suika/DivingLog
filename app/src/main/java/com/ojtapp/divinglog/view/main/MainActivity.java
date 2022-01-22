@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -30,6 +29,7 @@ import com.ojtapp.divinglog.view.detail.LogAddFragment;
 import com.ojtapp.divinglog.view.detail.LogDetailFragment;
 import com.ojtapp.divinglog.view.detail.LogEditFragment;
 import com.ojtapp.divinglog.view.dialog.SortDialogFragment;
+import com.ojtapp.divinglog.viewModel.MainViewModel;
 
 public class MainActivity extends AppCompatActivity implements LogFragment.OnListItemListener, LogDetailFragment.OnDetailFragmentEditButtonListener {
     /**
@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements LogFragment.OnLis
     private static final String TAG = MainActivity.class.getSimpleName();
     private LogFragment targetFragment;
     private FusedLocationProviderClient fusedLocationClient;
-    private Location location = null;
     public static SharedPreferences sharedPreferences;
     public static final int RESULT_PICK_IMAGEFILE = 1000;
 
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements LogFragment.OnLis
         // LocationClientクラスのインスタンスを生成
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // 位置情報取得開始
-        startUpdateLocation(getApplicationContext());
+        startUpdateLocation(this);
 
         // 追加ボタンがクリックされた時の動作
         FloatingActionButton addButton = findViewById(R.id.button_add);
@@ -113,15 +112,9 @@ public class MainActivity extends AppCompatActivity implements LogFragment.OnLis
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
                 // 現在値を取得
-                MainActivity.this.location = locationResult.getLastLocation();
+                MainViewModel.setLocation(locationResult.getLastLocation());
             }
-
-            ;
         }, null);
-    }
-
-    public Location getLocation() {
-        return this.location;
     }
 
     /**
