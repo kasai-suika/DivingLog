@@ -22,8 +22,6 @@ public class InputDataCheckTest {
             {199, true},
             {200, false}};
 
-    private static final Object[][] INPUT_URI = {{null, true}};
-
     /**
      * 文字列入力テスト
      */
@@ -49,21 +47,6 @@ public class InputDataCheckTest {
         // 「本数」の入力でテスト
         for (Object[] test : INPUT_INT) {
             divingLog.setDiveNumber((int) test[0]);
-            Assert.assertEquals(test[1], CheckDataUtil.checkDivingLog(divingLog));
-        }
-    }
-
-    /**
-     * URI入力テスト
-     */
-    @Test
-    public void inputURIData() {
-        DivingLog divingLog = new DivingLog();
-        divingLog.setDiveNumber(1);
-
-        // 「URI」の入力でテスト
-        for (Object[] test : INPUT_URI) {
-            divingLog.setPictureUri((String) test[0]);
             Assert.assertEquals(test[1], CheckDataUtil.checkDivingLog(divingLog));
         }
     }

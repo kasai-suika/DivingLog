@@ -1,6 +1,7 @@
 package com.ojtapp.divinglog.util;
 
 import com.ojtapp.divinglog.appif.DivingLog;
+import com.ojtapp.divinglog.view.dialog.SortMenu;
 
 public class CheckDataUtil {
     public static boolean checkDivingLog(DivingLog divingLog) {
@@ -23,6 +24,14 @@ public class CheckDataUtil {
         if ((divingLog.getDivingNumber() == ConversionUtil.NO_DATA) ||
                 (divingLog.getDivingNumber() <= 0) ||
                 (divingLog.getDivingNumber() >= 200)) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean checkSortModeValue(int sortModeValue){
+        if ((SortMenu.INDEX_SORTMODE_MAX_VALUE < sortModeValue) ||
+                (SortMenu.INDEX_SORTMODE_MIN_VALUE > sortModeValue)) {
             return false;
         }
         return true;
