@@ -8,8 +8,8 @@ import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.ojtapp.divinglog.constant.LogConstant;
 import com.ojtapp.divinglog.appif.DivingLog;
+import com.ojtapp.divinglog.constant.LogConstant;
 import com.ojtapp.divinglog.model.OpenHelper;
 
 import java.lang.ref.WeakReference;
@@ -86,9 +86,9 @@ public class RegisterAsyncTask extends AsyncTask<DivingLog, Integer, Boolean> {
         values.put(LogConstant.MEMO, divingLogs[0].getMemo());
         values.put(LogConstant.PICTURE, divingLogs[0].getPictureUri());
 
+        long result = db.insert(LogConstant.TABLE_NAME, null, values);
         // 保存実行
-        db.insert(LogConstant.TABLE_NAME, null, values);
-        return true;
+        return -1 != result;
     }
 
     @Override
