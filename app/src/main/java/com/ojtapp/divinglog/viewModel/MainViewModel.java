@@ -21,6 +21,7 @@ import com.ojtapp.divinglog.controller.DeleteAsyncTask;
 import com.ojtapp.divinglog.controller.RegisterAsyncTask;
 import com.ojtapp.divinglog.controller.UpdateAsyncTask;
 import com.ojtapp.divinglog.controller.WeatherInfoReceiver;
+import com.ojtapp.divinglog.util.CheckDataUtil;
 import com.ojtapp.divinglog.util.ConversionUtil;
 import com.ojtapp.divinglog.view.dialog.DialogFragment;
 import com.ojtapp.divinglog.view.main.MainActivity;
@@ -113,7 +114,10 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         });
 
         setDateToDivingLog(divingLog);
-        registerAsyncTask.execute(divingLog);
+        if (CheckDataUtil.checkDivingLog(divingLog)) {
+            registerAsyncTask.execute(divingLog);
+        }
+        //TODO:現状何も起きないだけ。入力しなおすダイアログ？EditTextを赤にする？処理を行う
     }
 
     /**
@@ -146,7 +150,9 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
                         Log.e(TAG, "削除に失敗しました");
                     }
                 });
-                deleteAsyncTask.execute(divingLog);
+                if (CheckDataUtil.checkDivingLog(divingLog)) {
+                    deleteAsyncTask.execute(divingLog);
+                }
             }
 
             @Override
@@ -181,7 +187,9 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         });
 
         setDateToDivingLog(divingLog);
-        updateAsyncTask.execute(divingLog);
+        if (CheckDataUtil.checkDivingLog(divingLog)) {
+            updateAsyncTask.execute(divingLog);
+        }
     }
 
     /**
@@ -354,7 +362,8 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      * @param divingLog 　格納先のDivingLogクラス
      */
     private void setDateToDivingLog(DivingLog divingLog) {
-        divingLog.setDiveNumber(Integer.parseInt(diveNumber));
+        Log.d("a", "place =" + place);
+        divingLog.setDiveNumber(ConversionUtil.getIntFromStr(diveNumber));
         divingLog.setPlace(place);
         divingLog.setPoint(point);
         divingLog.setDepthMax(ConversionUtil.getIntFromStr(depthMax));
@@ -387,6 +396,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
             divingLog.setPictureUri(uriValue.toString());
         }
     }
+
 
     /**
      * ダイビングで使用した空気の総量を計算し、値を返す
