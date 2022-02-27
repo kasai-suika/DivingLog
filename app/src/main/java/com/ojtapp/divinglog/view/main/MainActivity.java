@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements OnReplaceViewButt
      */
     @Override
     public void onReplaceToEditFragmentButtonClick(@NonNull DivingLog divingLog) {
-        LogEditFragment fragment = (LogEditFragment) LogEditFragment.newInstance(divingLog);
+        Fragment fragment = LogEditFragment.newInstance(divingLog);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
     }
 
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements OnReplaceViewButt
      */
     @Override
     public void onReplaceToDetailFragmentButtonClick(@NonNull DivingLog divingLog) {
-        LogDetailFragment fragment = (LogDetailFragment) LogDetailFragment.newInstance(divingLog);
+        Fragment fragment = LogDetailFragment.newInstance(divingLog);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
     }
 //
