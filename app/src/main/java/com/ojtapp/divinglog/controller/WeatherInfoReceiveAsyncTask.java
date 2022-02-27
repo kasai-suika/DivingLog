@@ -22,8 +22,8 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WeatherInfoReceiver extends AsyncTask<String, String, String[]> {
-    private static final String TAG = WeatherInfoReceiver.class.getSimpleName();
+public class WeatherInfoReceiveAsyncTask extends AsyncTask<WeatherInfoParams, String, String[]> {
+    private static final String TAG = WeatherInfoReceiveAsyncTask.class.getSimpleName();
 
     /**
      * コールバック設定用
@@ -95,9 +95,9 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String[]> {
     };
 
     @Override
-    protected String[] doInBackground(String... params) {
+    protected String[] doInBackground(WeatherInfoParams... params) {
         // 天気情報サイトのURLの文字列を取得
-        String urlStr = getWeatherSiteURL(params);
+        String urlStr = getWeatherSiteURL(params[0]);
 
         // URL先に接続し文字列データを取得
         String dataStr = null;
@@ -172,16 +172,16 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String[]> {
      * @param params 天気取得対象の情報
      * @return 天気情報サイトのURLの文字列
      */
-    private String getWeatherSiteURL(String[] params) {
-        if (1 == params.length) {
-            String cityName = params[0];
-            return ConversionUtil.getWeatherSiteURL(cityName);
-        } else if (2 == params.length) {
-            String lat = params[0];
-            String lon = params[1];
-            return ConversionUtil.getWeatherSiteURL(lat, lon);
+    private String getWeatherSiteURL(WeatherInfoParams params) {
+
+        if (params instanceof WeatherInfoParams.PlaceName) {
+            String place = ((WeatherInfoParams.PlaceName) params).place;
+            return ConversionUtil.getWeatherSiteURL(place);
+        } else {
+            String latitude = ((WeatherInfoParams.GeographicCoordinates) params).latitude;
+            String longitude = ((WeatherInfoParams.GeographicCoordinates) params).longitude;
+            return ConversionUtil.getWeatherSiteURL(latitude, longitude);
         }
-        return null;
     }
 
     /**

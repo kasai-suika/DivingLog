@@ -20,7 +20,8 @@ import com.ojtapp.divinglog.constant.LogConstant;
 import com.ojtapp.divinglog.controller.DeleteAsyncTask;
 import com.ojtapp.divinglog.controller.RegisterAsyncTask;
 import com.ojtapp.divinglog.controller.UpdateAsyncTask;
-import com.ojtapp.divinglog.controller.WeatherInfoReceiver;
+import com.ojtapp.divinglog.controller.WeatherInfoParams;
+import com.ojtapp.divinglog.controller.WeatherInfoReceiveAsyncTask;
 import com.ojtapp.divinglog.util.ConversionUtil;
 import com.ojtapp.divinglog.view.dialog.DialogFragment;
 import com.ojtapp.divinglog.view.main.MainActivity;
@@ -229,8 +230,8 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      * @param place 天気を取得したい場所の地名
      */
     private void updateWeatherInfo(@NonNull String place) {
-        WeatherInfoReceiver weatherInfoReceiver = new WeatherInfoReceiver();
-        weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiver.WeatherInfoCallback() {
+        WeatherInfoReceiveAsyncTask weatherInfoReceiver = new WeatherInfoReceiveAsyncTask();
+        weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiveAsyncTask.WeatherInfoCallback() {
             @Override
             public void onSuccess(String weather, String temp) {
                 setWeatherInfo(weather, temp);
@@ -241,7 +242,10 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
                 setWeatherInfo(null, null);
             }
         });
-        weatherInfoReceiver.execute(place);
+
+
+        WeatherInfoParams weatherInfoParams = new WeatherInfoParams.PlaceName(place);
+        weatherInfoReceiver.execute(weatherInfoParams);
     }
 
     /**
@@ -251,11 +255,11 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      */
     private void updateWeatherInfo(@NonNull Location location) {
         DecimalFormat df = new DecimalFormat("###.##");
-        String lat = df.format(location.getLatitude());     // 緯度を取得
-        String lon = df.format(location.getLongitude());    // 経度を取得
+        String latitude = df.format(location.getLatitude());     // 緯度を取得
+        String longitude = df.format(location.getLongitude());    // 経度を取得
 
-        WeatherInfoReceiver weatherInfoReceiver = new WeatherInfoReceiver();
-        weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiver.WeatherInfoCallback() {
+        WeatherInfoReceiveAsyncTask weatherInfoReceiver = new WeatherInfoReceiveAsyncTask();
+        weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiveAsyncTask.WeatherInfoCallback() {
             @Override
             public void onSuccess(String weather, String temp) {
                 setWeatherInfo(weather, temp);
@@ -266,7 +270,9 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
                 setWeatherInfo(null, null);
             }
         });
-        weatherInfoReceiver.execute(lat, lon);
+
+        WeatherInfoParams.GeographicCoordinates weatherInfoParams = new WeatherInfoParams.GeographicCoordinates(latitude, longitude);
+        weatherInfoReceiver.execute(weatherInfoParams);
     }
 
     /**
