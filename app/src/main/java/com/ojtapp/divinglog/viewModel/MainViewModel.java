@@ -40,10 +40,9 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
     private static final String TAG = MainViewModel.class.getSimpleName();
     private static Location location;
     public MutableLiveData<Uri> uri = new MutableLiveData<>();
-    public MutableLiveData<Context> context = new MutableLiveData<>();
     public MutableLiveData<String> weather = new MutableLiveData<>();
     public MutableLiveData<String> temp = new MutableLiveData<>();
-    private MutableLiveData<String> genzaichiWeatherClickAction = new MutableLiveData<>();
+    private final MutableLiveData<String> genzaichiWeatherClickAction = new MutableLiveData<>();
     public String diveNumber;
     public String place;
     public String point;
@@ -84,7 +83,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      */
     public MainViewModel(@NonNull Context context, @Nullable DivingLog divingLog) {
         weakReference = new WeakReference<>(context);
-        this.context.setValue(context);
+//        this.context.setValue(context);
         if (null != divingLog) {
             this.divingLog = divingLog;
             setDataToLayout(divingLog);
