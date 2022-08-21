@@ -10,9 +10,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.ojtapp.divinglog.R;
 import com.ojtapp.divinglog.appif.DivingLog;
+import com.ojtapp.divinglog.listner.OnReplaceViewButtonClickListener;
 
 import java.util.List;
 
@@ -20,6 +22,10 @@ public class LogAdapter extends ArrayAdapter<DivingLog> {
     private static final String TAG = LogAdapter.class.getSimpleName();
     private final int resource;
     private final LayoutInflater inflater;
+    /**
+     * 画面移行するリスナー
+     */
+    private OnReplaceViewButtonClickListener listener;
 
     /**
      * コンストラクタ
@@ -61,8 +67,18 @@ public class LogAdapter extends ArrayAdapter<DivingLog> {
 
         // 編集ボタン押下
         ImageButton editButton = view.findViewById(R.id.list_button_edit);
-        editButton.setTag(divingLog);
-
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ((null != listener) && (null != divingLog)) {
+                    listener.onReplaceToEditFragmentButtonClick(divingLog);
+                }
+            }
+        });
         return view;
+    }
+
+    public void setOnReplaceViewButtonClickListener(@Nullable OnReplaceViewButtonClickListener listener) {
+        this.listener = listener;
     }
 }

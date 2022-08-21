@@ -1,7 +1,6 @@
 package com.ojtapp.divinglog.controller;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,8 +22,8 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WeatherInfoReceiver extends AsyncTask<String, String, String[]> {
-    private static final String TAG = WeatherInfoReceiver.class.getSimpleName();
+public class WeatherInfoReceiveAsyncTask extends AsyncTask<WeatherInfoParams, String, String[]> {
+    private static final String TAG = WeatherInfoReceiveAsyncTask.class.getSimpleName();
 
     /**
      * コールバック設定用
@@ -96,44 +95,26 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String[]> {
     };
 
     @Override
-    protected String[] doInBackground(String... params) {
-        String cityName = params[0];
-        String urlStr = ConversionUtil.getWeatherSiteURL(cityName);
-        String isStr = " ";
-        String weather = " ";
-        String temp = " ";
+    protected String[] doInBackground(WeatherInfoParams... params) {
+        // 天気情報サイトのURLの文字列を取得
+        String urlStr = getWeatherSiteURL(params[0]);
 
-        HttpURLConnection con = null;
-        InputStream is = null;
-
-        // URL先に接続し文字列データを取得する
+        // URL先に接続し文字列データを取得
+        String dataStr = null;
         try {
-            URL url = new URL(urlStr);
-            con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            con.connect();
-            is = con.getInputStream();
-            isStr = is2String(is);
-        } catch (IOException ex) {
-            Log.e(TAG, "error = " + ex);
-        } finally {
-            if (con != null) {
-                con.disconnect();
-            }
-
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException ex) {
-                    Log.e(TAG, "error = " + ex);
-                }
-            }
+            InputStream data = getDataFromURL(urlStr);  // URL先に接続しデータを取得
+            dataStr = data2String(data);                // データを文字列に変換
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         // 取得した文字列データをJSONに変換し、必要な情報を取得する
+        String weather = " ";
+        String temp = " ";
         try {
             // 天気
-            JSONObject rootJSON = new JSONObject(isStr);
+            assert dataStr != null;
+            JSONObject rootJSON = new JSONObject(dataStr);
             JSONArray weatherJSON = rootJSON.getJSONArray("weather");
             JSONObject weatherJSON0 = weatherJSON.getJSONObject(0);
             String weatherId = weatherJSON0.getString("id");
@@ -163,11 +144,7 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String[]> {
         String temp = result[1];
 
         if (null != weatherInfoCallback) {
-            if (null != result) {
-                weatherInfoCallback.onSuccess(weather, temp);
-            } else {
-                weatherInfoCallback.onFailure();
-            }
+            weatherInfoCallback.onSuccess(weather, temp);
         }
     }
 
@@ -178,7 +155,7 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String[]> {
      * @return バイトデータを文字列に変換したもの
      * @throws IOException 　文字列変換時にI/Oエラーが起こった場合にthrowsされる
      */
-    private String is2String(@NonNull InputStream is) throws IOException {
+    private String data2String(@NonNull InputStream is) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         StringBuilder sb = new StringBuilder();
         char[] b = new char[1024];
@@ -187,6 +164,39 @@ public class WeatherInfoReceiver extends AsyncTask<String, String, String[]> {
             sb.append(b, 0, line);
         }
         return sb.toString();
+    }
+
+    /**
+     * 天気情報サイトのURLの文字列を取得
+     *
+     * @param params 天気取得対象の情報
+     * @return 天気情報サイトのURLの文字列
+     */
+    private String getWeatherSiteURL(WeatherInfoParams params) {
+
+        if (params instanceof WeatherInfoParams.PlaceName) {
+            String place = ((WeatherInfoParams.PlaceName) params).place;
+            return ConversionUtil.getWeatherSiteURL(place);
+        } else {
+            String latitude = ((WeatherInfoParams.GeographicCoordinates) params).latitude;
+            String longitude = ((WeatherInfoParams.GeographicCoordinates) params).longitude;
+            return ConversionUtil.getWeatherSiteURL(latitude, longitude);
+        }
+    }
+
+    /**
+     * URL先に接続しデータを取得
+     *
+     * @param urlStr URLの文字列
+     * @return URL先のデータ
+     * @throws IOException error
+     */
+    private InputStream getDataFromURL(String urlStr) throws IOException {
+        URL url = new URL(urlStr);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("GET");
+        con.connect();
+        return con.getInputStream();
     }
 
     /**

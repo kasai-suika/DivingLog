@@ -1,7 +1,9 @@
 package com.ojtapp.divinglog.view.main;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,25 +13,37 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ojtapp.divinglog.R;
 import com.ojtapp.divinglog.appif.DivingLog;
+import com.ojtapp.divinglog.listner.OnReplaceViewButtonClickListener;
 import com.ojtapp.divinglog.util.SharedPreferencesUtil;
 import com.ojtapp.divinglog.view.detail.LogAddFragment;
 import com.ojtapp.divinglog.view.detail.LogDetailFragment;
 import com.ojtapp.divinglog.view.detail.LogEditFragment;
 import com.ojtapp.divinglog.view.dialog.SortDialogFragment;
+import com.ojtapp.divinglog.viewModel.MainViewModel;
 
-public class MainActivity extends AppCompatActivity implements LogFragment.OnListItemListener, LogDetailFragment.OnDetailFragmentEditButtonListener {
+public class MainActivity extends AppCompatActivity implements OnReplaceViewButtonClickListener {
     /**
      * クラス名
      */
     private static final String TAG = MainActivity.class.getSimpleName();
     private LogFragment targetFragment;
+    private FusedLocationProviderClient fusedLocationClient;
     public static SharedPreferences sharedPreferences;
-    public static final int RESULT_PICK_IMAGEFILE = 1000;
+    public static final int REQUEST_CODE_OPEN_DOCUMENT = 1000;
+    private static final int REQUEST_CODE_FINE_LOCATION = 2000;
+    private static final String[] PERMISSIONS_FINE_LOCATION = {Manifest.permission.ACCESS_FINE_LOCATION};
 
 
     @Override
@@ -38,9 +52,13 @@ public class MainActivity extends AppCompatActivity implements LogFragment.OnLis
         setContentView(R.layout.activity_main);
         sharedPreferences = getApplicationContext().getSharedPreferences(SharedPreferencesUtil.FILE_NAME_SORT, Context.MODE_PRIVATE);
 
-        // アクションボタンとViewの紐づけ
-        FloatingActionButton addButton = findViewById(R.id.button_add);
+        // LocationClientクラスのインスタンスを生成
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        // 位置情報取得開始
+        startUpdateLocation(this);
+
         // 追加ボタンがクリックされた時の動作
+        FloatingActionButton addButton = findViewById(R.id.button_add);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,6 +68,15 @@ public class MainActivity extends AppCompatActivity implements LogFragment.OnLis
             }
         });
 
+        MainViewModel viewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(MainViewModel.class);
+        viewModel.checkLocationPermission().observe(this, observe -> {
+            // 権限がない場合、許可ダイアログ表示
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS_FINE_LOCATION, REQUEST_CODE_FINE_LOCATION);
+            }
+        });
+
+        // 画面遷移
         targetFragment = LogFragment.newInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.container, targetFragment).commit();
     }
@@ -63,6 +90,45 @@ public class MainActivity extends AppCompatActivity implements LogFragment.OnLis
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         return true;
+    }
+
+    /**
+     * 許可ダイアログの結果受取
+     * {@inheritDoc}
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if ((requestCode == REQUEST_CODE_FINE_LOCATION)
+                && (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                && (permissions == PERMISSIONS_FINE_LOCATION)) {
+            // 位置情報取得開始
+            startUpdateLocation(this);
+        }
+    }
+
+    /**
+     * 位置情報取得開始メソッド
+     */
+    private void startUpdateLocation(Context context) {
+        // 位置情報取得権限の確認
+        if (ActivityCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // 権限がない場合、許可ダイアログ表示
+            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+            ActivityCompat.requestPermissions(this, permissions, 2000);
+            return;
+        }
+
+        // 位置情報の取得方法を設定
+        LocationRequest locationRequest = LocationRequest.create();
+        fusedLocationClient.requestLocationUpdates(locationRequest, new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                // 現在値を取得
+                MainViewModel.setLocation(locationResult.getLastLocation());
+            }
+        }, null);
     }
 
     /**
@@ -93,43 +159,37 @@ public class MainActivity extends AppCompatActivity implements LogFragment.OnLis
     public void onAttachFragment(@NonNull Fragment fragment) {
         if (fragment instanceof LogFragment) {
             LogFragment logFragment = (LogFragment) fragment;
-            logFragment.setOnListItemListener(this);
+            logFragment.setOnReplaceViewButtonClickListener(this);
         } else if (fragment instanceof LogDetailFragment) {
             LogDetailFragment logDetailFragment = (LogDetailFragment) fragment;
-            logDetailFragment.setOnDetailFragmentEditButtonListener(this);
+            logDetailFragment.setOnReplaceViewButtonClickListener(this);
         }
     }
 
     /**
-     * リストアイテムが押下された場合、
-     * 詳細画面に移行する
-     * @param divingLog　押下されたリストアイテムが保持するデータをもつDivingLogクラス
+     * {@inheritDoc}
      */
     @Override
-    public void onListItem(@NonNull DivingLog divingLog) {
-        LogDetailFragment fragment = (LogDetailFragment) LogDetailFragment.newInstance(divingLog);
+    public void onReplaceToEditFragmentButtonClick(@NonNull DivingLog divingLog) {
+        Fragment fragment = LogEditFragment.newInstance(divingLog);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
     }
 
     /**
-     * 詳細画面で「更新ボタン」が押下された場合、
-     * 編集画面に移行する
-     * @param divingLog　更新対象のデータをもつDivingLogクラス
+     * {@inheritDoc}
      */
     @Override
-    public void onDetailFragmentEditButton(@NonNull DivingLog divingLog) {
-        LogEditFragment fragment = (LogEditFragment) LogEditFragment.newInstance(divingLog);
+    public void onReplaceToDetailFragmentButtonClick(@NonNull DivingLog divingLog) {
+        Fragment fragment = LogDetailFragment.newInstance(divingLog);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
     }
-
-    /**
-     * リスト内の「更新ボタン」が押下された場合、
-     * 編集画面に移行する
-     * @param view　押下されたリスト
-     */
-    public void onListEditButton(@NonNull View view) {
-        DivingLog divingLog = (DivingLog) view.getTag();
-        LogEditFragment fragment = (LogEditFragment) LogEditFragment.newInstance(divingLog);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
-    }
+//
+//    @Override
+//    public void replaceToActivity() {
+//        // 情報をintentに詰める
+//        Intent intent = new Intent(this, MainActivity.class);
+//        // 指定したアクティビティより上のViewを削除
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        this.startActivity(intent);
+//    }
 }

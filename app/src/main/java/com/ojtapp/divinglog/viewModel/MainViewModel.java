@@ -2,6 +2,7 @@ package com.ojtapp.divinglog.viewModel;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -18,25 +20,29 @@ import com.ojtapp.divinglog.constant.LogConstant;
 import com.ojtapp.divinglog.controller.DeleteAsyncTask;
 import com.ojtapp.divinglog.controller.RegisterAsyncTask;
 import com.ojtapp.divinglog.controller.UpdateAsyncTask;
-import com.ojtapp.divinglog.controller.WeatherInfoReceiver;
+import com.ojtapp.divinglog.controller.WeatherInfoParams;
+import com.ojtapp.divinglog.controller.WeatherInfoReceiveAsyncTask;
 import com.ojtapp.divinglog.util.ConversionUtil;
 import com.ojtapp.divinglog.view.dialog.DialogFragment;
 import com.ojtapp.divinglog.view.main.MainActivity;
 
 import java.lang.ref.WeakReference;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 public class MainViewModel extends ViewModel implements ClickHandlers {
     private static final String TAG = MainViewModel.class.getSimpleName();
+    private static Location location;
     public MutableLiveData<Uri> uri = new MutableLiveData<>();
-    public MutableLiveData<Context> context = new MutableLiveData<>();
     public MutableLiveData<String> weather = new MutableLiveData<>();
     public MutableLiveData<String> temp = new MutableLiveData<>();
+    private final MutableLiveData<String> genzaichiWeatherClickAction = new MutableLiveData<>();
     public String diveNumber;
     public String place;
     public String point;
@@ -66,6 +72,9 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      */
     private static WeakReference<Context> weakReference = null;
 
+    public MainViewModel() {
+    }
+
     /**
      * コンストラクタ
      *
@@ -74,7 +83,7 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
      */
     public MainViewModel(@NonNull Context context, @Nullable DivingLog divingLog) {
         weakReference = new WeakReference<>(context);
-        this.context.setValue(context);
+//        this.context.setValue(context);
         if (null != divingLog) {
             this.divingLog = divingLog;
             setDataToLayout(divingLog);
@@ -83,8 +92,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
 
     /**
      * {@inheritDoc}
-     *
-     * @param view ボタン
      */
     @Override
     public void onMakeClick(View view) {
@@ -111,8 +118,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
 
     /**
      * {@inheritDoc}
-     *
-     * @param view 　ボタン
      */
     @Override
     public void onDeleteClick(View view) {
@@ -153,8 +158,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
 
     /**
      * {@inheritDoc}
-     *
-     * @param view 　ボタン
      */
     @Override
     public void onEditClick(View view) {
@@ -200,13 +203,34 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
     }
 
     /**
+     * 現在地の天気を取得する
+     *
+     * @param view クリックされたボタン
+     */
+    public void onGenzaichiWeatherClick(View view) {
+        checkLocationPermission();
+        if (null != location) {
+            updateWeatherInfo(location);
+        }
+    }
+
+    public LiveData<String> checkLocationPermission() {
+        genzaichiWeatherClickAction.setValue(Objects.equals(genzaichiWeatherClickAction.getValue(), "a") ? "a" : "b");
+        return genzaichiWeatherClickAction;
+    }
+
+    public static void setLocation(Location GPSLocation) {
+        location = GPSLocation;
+    }
+
+    /**
      * 天気情報サイトから引数で指定された場所の天気を取得する
      *
-     * @param place 天気を取得したい場所
+     * @param place 天気を取得したい場所の地名
      */
     private void updateWeatherInfo(@NonNull String place) {
-        WeatherInfoReceiver weatherInfoReceiver = new WeatherInfoReceiver();
-        weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiver.WeatherInfoCallback() {
+        WeatherInfoReceiveAsyncTask weatherInfoReceiver = new WeatherInfoReceiveAsyncTask();
+        weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiveAsyncTask.WeatherInfoCallback() {
             @Override
             public void onSuccess(String weather, String temp) {
                 setWeatherInfo(weather, temp);
@@ -217,7 +241,37 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
                 setWeatherInfo(null, null);
             }
         });
-        weatherInfoReceiver.execute(place);
+
+
+        WeatherInfoParams weatherInfoParams = new WeatherInfoParams.PlaceName(place);
+        weatherInfoReceiver.execute(weatherInfoParams);
+    }
+
+    /**
+     * 天気情報サイトから引数で指定された位置情報の天気を取得する
+     *
+     * @param location 天気を取得したい場所の位置情報
+     */
+    private void updateWeatherInfo(@NonNull Location location) {
+        DecimalFormat df = new DecimalFormat("###.##");
+        String latitude = df.format(location.getLatitude());     // 緯度を取得
+        String longitude = df.format(location.getLongitude());    // 経度を取得
+
+        WeatherInfoReceiveAsyncTask weatherInfoReceiver = new WeatherInfoReceiveAsyncTask();
+        weatherInfoReceiver.setWeatherInfoCallback(new WeatherInfoReceiveAsyncTask.WeatherInfoCallback() {
+            @Override
+            public void onSuccess(String weather, String temp) {
+                setWeatherInfo(weather, temp);
+            }
+
+            @Override
+            public void onFailure() {
+                setWeatherInfo(null, null);
+            }
+        });
+
+        WeatherInfoParams.GeographicCoordinates weatherInfoParams = new WeatherInfoParams.GeographicCoordinates(latitude, longitude);
+        weatherInfoReceiver.execute(weatherInfoParams);
     }
 
     /**
@@ -289,16 +343,14 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
             defaultEndTimeOpt.ifPresent(cal::setTime);  //TODO ifPresentOrElse
             hourEnd = cal.get(Calendar.HOUR_OF_DAY);
             minuteEnd = cal.get(Calendar.MINUTE);
-
-            String pictureUri = divingLog.getPictureUri();
-            uri.setValue(Uri.parse(pictureUri));
-            context.setValue(weakReference.get());
         } catch (ParseException e) {
             Log.e(TAG, "Time's Error : " + e);
         }
 
         String pictureUri = divingLog.getPictureUri();
-        uri.setValue(Uri.parse(pictureUri));
+        if (null != pictureUri) {
+            uri.setValue(Uri.parse(pictureUri));
+        }
     }
 
     /**
@@ -335,7 +387,10 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         int minute = time[1];
         divingLog.setTimeDive(ConversionUtil.getStrTime(timeFormat, hour, minute));
 
-        divingLog.setPictureUri(uri.getValue().toString());
+        Uri uriValue = uri.getValue();
+        if (null != uriValue) {
+            divingLog.setPictureUri(uriValue.toString());
+        }
     }
 
     /**
@@ -374,4 +429,6 @@ public class MainViewModel extends ViewModel implements ClickHandlers {
         time[1] = minute;
         return time;
     }
+
+
 }

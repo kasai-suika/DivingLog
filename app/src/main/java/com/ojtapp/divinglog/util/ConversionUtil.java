@@ -135,10 +135,20 @@ public class ConversionUtil {
     /**
      * 天気取得サイトのURLを返す。
      *
-     * @param cityName 天気を取得する場所
+     * @param cityName 天気を取得する場所の地名
      * @return 天気取得サイトのURL
      */
     public static String getWeatherSiteURL(String cityName) {
-        return String.format(Locale.JAPAN, LogConstant.FORMAT_WEATHER_SITE_URL, cityName, BuildConfig.API_KEY);
+        return String.format(Locale.JAPAN, LogConstant.FORMAT_WEATHER_SITE_URL_PLACE, cityName, BuildConfig.API_KEY);
+    }
+
+    /**
+     * 天気取得サイトのURLを返す。
+     * @param lat 天気を取得する場所の緯度
+     * @param lon 天気を取得する場所の経度
+     * @return 天気取得サイトのURL
+     */
+    public static String getWeatherSiteURL(String lat, String lon) {
+        return String.format(Locale.JAPAN, LogConstant.FORMAT_WEATHER_SITE_URL_GPS, lat, lon, BuildConfig.API_KEY);
     }
 }

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="main"
             type="com.ojtapp.divinglog.viewModel.MainViewModel" />
@@ -303,6 +304,14 @@
                         android:layout_marginStart="5dp"
                         android:onClick="@{main.onOkinawaWeatherClick}"
                         android:text="@string/weather_place_okinawa" />
+
+                    <Button
+                        android:id="@+id/button_weather_genzaichi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:onClick="@{main.onGenzaichiWeatherClick}"
+                        android:text="@string/genzaichi" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -464,8 +473,7 @@
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/content_description_display_picture"
                     android:scaleType="fitStart"
-                    app:imageContext="@{main.context}"
-                    app:imageUri="@{main.uri}" />
+                    android:src="@{main.uri}" />
 
                 <TextView
                     android:layout_width="match_parent"

@@ -46,4 +46,5 @@
     <string name="diveNumber">本目</string>
     <string name="weather_place_izu">伊豆</string>
     <string name="weather_place_okinawa">沖縄</string>
+    <string name="genzaichi">現在地</string>
 </resources>

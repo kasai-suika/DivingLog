@@ -40,7 +40,15 @@ public class LogConstant {
      */
     public static final String MESSAGE_DELETE_DIALOG = "削除してもよろしいですか？";
     /**
-     * 天気取得サイトのURL
+     * 天気取得サイトのURL（ベース）
      */
-    public static final String FORMAT_WEATHER_SITE_URL = "https://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s";
+    public static final String BASE_URL = "https://api.openweathermap.org/data/2.5/weather?";
+    /**
+     * 天気取得サイトのURL（地名指定用）
+     */
+    public static final String FORMAT_WEATHER_SITE_URL_PLACE = BASE_URL + "q=%s&appid=%s";
+    /**
+     * 天気取得サイトのURL（経度、緯度指定用）
+     */
+    public static final String FORMAT_WEATHER_SITE_URL_GPS = BASE_URL + "lat=%s&lon=%s&appid=%s";
 }

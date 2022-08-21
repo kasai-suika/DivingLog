@@ -447,8 +447,7 @@
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/content_description_display_picture"
                     android:scaleType="fitStart"
-                    app:imageContext="@{main.context}"
-                    app:imageUri="@{main.uri}" />
+                    android:src="@{main.uri}" />
 
                 <TextView
                     android:layout_width="match_parent"
